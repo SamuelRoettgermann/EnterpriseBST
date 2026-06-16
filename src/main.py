@@ -1,7 +1,6 @@
 from bst import BST
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     bst = BST[int]()
     bst.insert(1)
     bst.insert(2)

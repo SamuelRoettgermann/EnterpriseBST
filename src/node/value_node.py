@@ -1,6 +1,7 @@
 from node import Node
 from optional import Optional
 
+
 class ValueNode[T](Node[T]):
     val: T
     left: Node[T]
@@ -8,6 +9,7 @@ class ValueNode[T](Node[T]):
 
     def __init__(self, value: T):
         from node import LeafNode
+
         self.val = value
         self.left = LeafNode[T]()
         self.right = LeafNode[T]()
@@ -57,7 +59,9 @@ class ValueNode[T](Node[T]):
     def __len__(self):
         return 1 + len(self.left) + len(self.right)
 
-    def _pretty_print(self, prefix: str = "", is_left: bool = False, is_root: bool = True) -> list[str]:
+    def _pretty_print(
+        self, prefix: str = "", is_left: bool = False, is_root: bool = True
+    ) -> list[str]:
         lines = []
 
         if is_root:
@@ -73,8 +77,12 @@ class ValueNode[T](Node[T]):
         lines.append(f"{prefix}{pointer}{self.val}")
 
         if not (self.left.value().missing() and self.right.value().missing()):
-            lines.extend(self.left._pretty_print(next_prefix, is_left=True, is_root=False))
-            lines.extend(self.right._pretty_print(next_prefix, is_left=False, is_root=False))
+            lines.extend(
+                self.left._pretty_print(next_prefix, is_left=True, is_root=False)
+            )
+            lines.extend(
+                self.right._pretty_print(next_prefix, is_left=False, is_root=False)
+            )
 
         return lines
 

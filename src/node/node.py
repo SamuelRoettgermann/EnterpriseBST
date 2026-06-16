@@ -2,6 +2,7 @@ import abc
 
 from optional import Optional
 
+
 class Node[T](abc.ABC):
     @abc.abstractmethod
     def value(self) -> Optional[T]: ...
@@ -19,4 +20,6 @@ class Node[T](abc.ABC):
     def __len__(self) -> int: ...
 
     @abc.abstractmethod
-    def _pretty_print(self, prefix: str = "", is_left: bool = False, is_root: bool = False) -> list[str]: ...
+    def _pretty_print(
+        self, prefix: str = "", is_left: bool = False, is_root: bool = False
+    ) -> list[str]: ...

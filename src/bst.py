@@ -1,5 +1,6 @@
 from node import Node, LeafNode
 
+
 class BST[T]:
     root: Node[T]
 

@@ -95,5 +95,5 @@ class TestBST(unittest.TestCase):
         self.assertFalse(self.bst.search(10))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
