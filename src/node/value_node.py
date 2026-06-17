@@ -24,10 +24,10 @@ class ValueNode[T](Node[T]):
         return False
 
     def insert(self, value: T) -> "Node[T]":
-        if value == self.value():
+        if value == self.value:
             return self
 
-        if value < self.value():
+        if value < self.value:
             self._left = self._left.insert(value)
         else:
             self._right = self._right.insert(value)
@@ -35,19 +35,19 @@ class ValueNode[T](Node[T]):
         return self
 
     def search(self, value: T) -> bool:
-        if value == self.value():
+        if value == self.value:
             return True
 
-        if value < self.value():
+        if value < self.value:
             return self._left.search(value)
         else:
             return self._right.search(value)
 
     def remove(self, value: T) -> "Node[T]":
-        if value == self.value():
+        if value == self.value:
             if not self._left.is_leaf() and not self._right.is_leaf():
-                self.value = self._left.value()
-                self._left = self._left.remove(self.value())
+                self.value = self._left.value
+                self._left = self._left.remove(self.value)
                 return self
 
             if self._right.is_leaf():
@@ -55,7 +55,7 @@ class ValueNode[T](Node[T]):
             else:
                 return self._right.remove(value)
 
-        if value < self.value():
+        if value < self.value:
             self._left = self._left.remove(value)
         else:
             self._right = self._right.remove(value)

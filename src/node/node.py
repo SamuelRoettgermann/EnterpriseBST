@@ -3,8 +3,8 @@ import abc
 
 
 class Node[T](abc.ABC):
-    @abc.abstractmethod
     @property
+    @abc.abstractmethod
     def value(self) -> T: ...
 
     @abc.abstractmethod
