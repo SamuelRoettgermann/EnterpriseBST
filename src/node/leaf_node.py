@@ -5,6 +5,7 @@ class LeafNode[T](Node[T]):
     def is_leaf(self) -> bool:
         return True
 
+    @property
     def value(self) -> T:
         return None
 

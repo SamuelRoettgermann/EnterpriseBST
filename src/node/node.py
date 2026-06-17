@@ -4,6 +4,7 @@ import abc
 
 class Node[T](abc.ABC):
     @abc.abstractmethod
+    @property
     def value(self) -> T: ...
 
     @abc.abstractmethod
