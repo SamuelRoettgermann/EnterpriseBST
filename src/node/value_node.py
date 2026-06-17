@@ -1,63 +1,69 @@
 from node import Node
-from optional import Optional
-
 
 class ValueNode[T](Node[T]):
-    val: T
-    left: Node[T]
-    right: Node[T]
+    _val: T
+    _left: Node[T]
+    _right: Node[T]
 
     def __init__(self, value: T):
         from node import LeafNode
 
-        self.val = value
-        self.left = LeafNode[T]()
-        self.right = LeafNode[T]()
+        self._val = value
+        self._left = LeafNode[T]()
+        self._right = LeafNode[T]()
 
-    def value(self) -> Optional[T]:
-        return Optional(self.val)
+    @property
+    def value(self) -> T:
+        return self._val
+
+    @value.setter
+    def value(self, value: T):
+        self._val = value
+    
+    def is_leaf(self) -> bool:
+        return False
 
     def insert(self, value: T) -> "Node[T]":
-        if value == self.value().get():
+        if value == self.value:
             return self
 
-        if value < self.value().get():
-            self.left = self.left.insert(value)
+        if value < self.value:
+            self._left = self._left.insert(value)
         else:
-            self.right = self.right.insert(value)
+            self._right = self._right.insert(value)
 
         return self
 
     def search(self, value: T) -> bool:
-        if value == self.value().get():
+        if value == self.value:
             return True
 
-        if value < self.value().get():
-            return self.left.search(value)
+        if value < self.value:
+            return self._left.search(value)
         else:
-            return self.right.search(value)
+            return self._right.search(value)
 
     def remove(self, value: T) -> "Node[T]":
-        if value == self.value().get():
-            if not self.left.value().missing() and not self.right.value().missing():
-                self.val = self.left.value().get()
-                self.left = self.left.remove(self.value().get())
+        if value == self.value:
+            if not self._left.is_leaf() and not self._right.is_leaf():
+                self.value = self._left.value
+                self._left = self._left.remove(self.value)
                 return self
 
-            if self.right.value().missing():
-                return self.left.remove(value)
+            if self._right.is_leaf():
+                return self._left.remove(value)
             else:
-                return self.right.remove(value)
+                return self._right.remove(value)
 
-        if value < self.value().get():
-            self.left = self.left.remove(value)
+        if value < self.value:
+            self._left = self._left.remove(value)
         else:
-            self.right = self.right.remove(value)
+            self._right = self._right.remove(value)
 
         return self
 
     def __len__(self):
-        return 1 + len(self.left) + len(self.right)
+        return 1 + len(self._left) + len(self._right)
 
     def _pretty_print(
         self, prefix: str = "", is_left: bool = False, is_root: bool = True
@@ -74,14 +80,14 @@ class ValueNode[T](Node[T]):
             pointer = "└── [R] "
             next_prefix = prefix + "    "
 
-        lines.append(f"{prefix}{pointer}{self.val}")
+        lines.append(f"{prefix}{pointer}{self._val}")
 
-        if not (self.left.value().missing() and self.right.value().missing()):
+        if not (self._left.is_leaf() and self._right.is_leaf()):
             lines.extend(
-                self.left._pretty_print(next_prefix, is_left=True, is_root=False)
+                self._left._pretty_print(next_prefix, is_left=True, is_root=False)
             )
             lines.extend(
-                self.right._pretty_print(next_prefix, is_left=False, is_root=False)
+                self._right._pretty_print(next_prefix, is_left=False, is_root=False)
             )
 
         return lines

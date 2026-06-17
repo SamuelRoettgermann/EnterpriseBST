@@ -1,11 +1,11 @@
 import abc
 
-from optional import Optional
 
 
 class Node[T](abc.ABC):
+    @property
     @abc.abstractmethod
-    def value(self) -> Optional[T]: ...
+    def value(self) -> T: ...
 
     @abc.abstractmethod
     def insert(self, value: T) -> "Node[T]": ...
@@ -23,3 +23,6 @@ class Node[T](abc.ABC):
     def _pretty_print(
         self, prefix: str = "", is_left: bool = False, is_root: bool = False
     ) -> list[str]: ...
+
+    @abc.abstractmethod
+    def is_leaf(self) -> bool: ...
