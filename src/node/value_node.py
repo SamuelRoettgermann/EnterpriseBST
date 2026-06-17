@@ -19,6 +19,14 @@ class ValueNode[T](Node[T]):
     @value.setter
     def value(self, value: T):
         self._val = value
+
+    @property
+    def smaller(self) -> Node[T]:
+        return self._left
+
+    @property
+    def larger(self) -> Node[T]:
+        return self._right
     
     def is_leaf(self) -> bool:
         return False

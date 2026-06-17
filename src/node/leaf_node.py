@@ -7,9 +7,17 @@ class LeafNode[T](Node[T]):
 
     @property
     def value(self) -> T:
-        return None
+        raise ValueError('a leaf does not have a value')
 
-    def insert(self, value: T) -> "Node[T]":
+    @property
+    def smaller(self) -> Node[T]:
+        return self
+
+    @property
+    def larger(self) -> Node[T]:
+        return self
+
+    def insert(self, value: T) -> Node[T]:
         from node import ValueNode
 
         return ValueNode(value)

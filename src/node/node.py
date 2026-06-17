@@ -7,6 +7,14 @@ class Node[T](abc.ABC):
     @abc.abstractmethod
     def value(self) -> T: ...
 
+    @property
+    @abc.abstractmethod
+    def smaller(self) -> "Node[T]": ...
+
+    @property
+    @abc.abstractmethod
+    def larger(self) -> "Node[T]": ...
+
     @abc.abstractmethod
     def insert(self, value: T) -> "Node[T]": ...
 
