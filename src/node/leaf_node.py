@@ -1,10 +1,12 @@
 from node import Node
-from optional import Optional
 
 
 class LeafNode[T](Node[T]):
-    def value(self) -> Optional[T]:
-        return Optional()
+    def is_leaf(self) -> bool:
+        return True
+
+    def value(self) -> T:
+        return None
 
     def insert(self, value: T) -> "Node[T]":
         from node import ValueNode
