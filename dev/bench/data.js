@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1781812998229,
+  "lastUpdate": 1781814188440,
   "repoUrl": "https://github.com/SamuelRoettgermann/EnterpriseBST",
   "entries": {
     "Benchmark": [
@@ -41,6 +41,51 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.000005132012488596675",
             "extra": "mean: 152.3886523067652 usec\nrounds: 6871"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "38440557+SamuelRoettgermann@users.noreply.github.com",
+            "name": "Samuel Röttgermann",
+            "username": "SamuelRoettgermann"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d808b88c7f1b7f0970d9c6300f211d1d705b4410",
+          "message": "Merge pull request #10 from SamuelRoettgermann/add-benchmarks\n\nAdd Benchmarks",
+          "timestamp": "2026-06-18T22:22:12+02:00",
+          "tree_id": "89905d4166b0d714ba971b6b318d4211ebe3cd22",
+          "url": "https://github.com/SamuelRoettgermann/EnterpriseBST/commit/d808b88c7f1b7f0970d9c6300f211d1d705b4410"
+        },
+        "date": 1781814188172,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "test/test_benchmark_bst.py::test_insertion_random",
+            "value": 8.1727304733047,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0027492355570172926",
+            "extra": "mean: 122.35812783333391 msec\nrounds: 30"
+          },
+          {
+            "name": "test/test_benchmark_bst.py::test_insertion_sorted",
+            "value": 2.64806515293147,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0013272934621938249",
+            "extra": "mean: 377.6342129999998 msec\nrounds: 30"
+          },
+          {
+            "name": "test/test_benchmark_bst.py::test_search_hit",
+            "value": 6658.830673816693,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000006071582551945833",
+            "extra": "mean: 150.17651731738997 usec\nrounds: 6814"
           }
         ]
       }
