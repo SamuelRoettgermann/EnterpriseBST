@@ -28,6 +28,9 @@ class LeafNode[T](Node[T]):
     def remove(self, value: T) -> "Node[T]":
         return self
 
+    def depth(self) -> int:
+        return 0
+
     def __len__(self) -> int:
         return 0
 

@@ -36,3 +36,6 @@ class Node[T](abc.ABC):
 
     @abc.abstractmethod
     def is_leaf(self) -> bool: ...
+
+    @abc.abstractmethod
+    def depth(self) -> int: ...

@@ -71,6 +71,9 @@ class ValueNode[T](Node[T]):
 
         return self
 
+    def depth(self) -> int:
+        return 1 + max(self._left.depth(), self._right.depth())
+
     def __len__(self):
         return 1 + len(self._left) + len(self._right)
 
