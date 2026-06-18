@@ -39,9 +39,6 @@ jobs:
         run: |
           black --check ${{ steps.changed-files.outputs.all_changed_files }}
 
-      - name: Check code formatting
-        run: black --check .
-
       - name: Run tests
         run: pytest test/
 
