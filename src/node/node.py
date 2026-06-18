@@ -26,6 +26,9 @@ class Node[T](abc.ABC):
     @abc.abstractmethod
     def __len__(self) -> int: ...
 
+    def __str__(self) -> str:
+        return "\n".join(self._pretty_print())
+
     @abc.abstractmethod
     def _pretty_print(
         self, prefix: str = "", is_left: bool = False, is_root: bool = False
