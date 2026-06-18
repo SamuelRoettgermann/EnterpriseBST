@@ -59,3 +59,4 @@ jobs:
           comment-on-alert: true   # ONLY drop a PR comment if performance degenerates heavily
           fail-on-alert: false
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          auto-push: true
