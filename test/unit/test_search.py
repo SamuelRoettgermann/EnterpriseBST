@@ -19,3 +19,9 @@ def test_search_multiple_elements(tree):
 
     assert not tree.search(0)
     assert not tree.search(11)
+
+
+def test_contains_syntax_sugar(tree):
+    tree.insert(42)
+    assert 42 in tree
+    assert 99 not in tree

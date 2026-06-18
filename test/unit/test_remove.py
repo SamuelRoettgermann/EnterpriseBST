@@ -5,10 +5,18 @@ def test_remove_from_empty(tree):
 def test_remove_non_existent(tree):
     tree.insert(10)
     tree.insert(20)
+
     assert not tree.remove(15)
 
 
-def test_remove_leaf_node(tree):
+def test_remove_single_item_collection(tree):
+    tree.insert(10)
+
+    assert tree.remove(10)
+    assert not tree.search(10)
+
+
+def test_remove_linear_edge_element(tree):
     tree.insert(15)
     tree.insert(10)
 
@@ -17,7 +25,7 @@ def test_remove_leaf_node(tree):
     assert tree.search(15)
 
 
-def test_remove_node_with_one_child(tree):
+def test_remove_interior_element_from_small_set(tree):
     tree.insert(15)
     tree.insert(10)
     tree.insert(5)
@@ -28,7 +36,7 @@ def test_remove_node_with_one_child(tree):
     assert tree.search(15)
 
 
-def test_remove_node_with_two_children(tree):
+def test_remove_element_with_complex_neighbors(tree):
     tree.insert(15)
     tree.insert(10)
     tree.insert(5)
@@ -41,14 +49,7 @@ def test_remove_node_with_two_children(tree):
     assert tree.search(15)
 
 
-def test_remove_root(tree):
-    tree.insert(10)
-
-    assert tree.remove(10)
-    assert not tree.search(10)
-
-
-def test_remove_root_multiple_elements(tree):
+def test_remove_initial_element_multiple_items(tree):
     tree.insert(15)
     tree.insert(10)
     tree.insert(20)
