@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1781818431300,
+  "lastUpdate": 1781824180545,
   "repoUrl": "https://github.com/SamuelRoettgermann/EnterpriseBST",
   "entries": {
     "Benchmark": [
@@ -168,6 +168,47 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.000004702425359507791",
             "extra": "mean: 159.0448280697343 usec\nrounds: 6491"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "SamuelRoettgermann",
+            "username": "SamuelRoettgermann"
+          },
+          "committer": {
+            "name": "SamuelRoettgermann",
+            "username": "SamuelRoettgermann"
+          },
+          "id": "67142fe5345b279ff8551d6a4eed274467d52508",
+          "message": "Generalized Tree structure and Dynamic Benchmarks",
+          "timestamp": "2026-06-18T20:22:18Z",
+          "url": "https://github.com/SamuelRoettgermann/EnterpriseBST/pull/11/commits/67142fe5345b279ff8551d6a4eed274467d52508"
+        },
+        "date": 1781824179805,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "test/benchmark/test_benchmark_insert.py::test_insertion_average_case[BST]",
+            "value": 58.79096117897017,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000051733250965048216",
+            "extra": "mean: 17.009417433333358 msec\nrounds: 60"
+          },
+          {
+            "name": "test/benchmark/test_benchmark_insert.py::test_insertion_worst_case[BST]",
+            "value": 14.63752993146525,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00019796841870508961",
+            "extra": "mean: 68.31753749998295 msec\nrounds: 30"
+          },
+          {
+            "name": "test/benchmark/test_benchmark_search.py::test_search_hit[BST]",
+            "value": 10271.82567001589,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000002767708033505876",
+            "extra": "mean: 97.35367714807147 usec\nrounds: 10590"
           }
         ]
       }
