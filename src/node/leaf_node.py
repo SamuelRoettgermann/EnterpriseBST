@@ -41,6 +41,3 @@ class LeafNode[T](Node[T]):
         # If this leaf is a child, represent it with a subtle dot to show missing branches
         pointer = "├── [L] " if is_left else "└── [R] "
         return [f"{prefix}{pointer}·"]
-
-    def __str__(self) -> str:
-        return "\n".join(self._pretty_print())

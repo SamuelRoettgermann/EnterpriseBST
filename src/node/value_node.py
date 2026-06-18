@@ -100,6 +100,3 @@ class ValueNode[T](Node[T]):
             )
 
         return lines
-
-    def __str__(self) -> str:
-        return "\n".join(self._pretty_print())
