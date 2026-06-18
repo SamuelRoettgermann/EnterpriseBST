@@ -46,9 +46,43 @@ jobs:
       - name: Run tests
         run: pytest test/ --benchmark-skip
 
-      - name: Run benchmarks
+      - name: Run affected benchmarks
         run: |
-          pytest test/ --benchmark-only --benchmark-json=benchmark_results.json
+          # 1. Grab the list of all files changed in this push/PR
+          ALL_CHANGED_FILES="${{ steps.changed-files.outputs.all_changed_files }}"
+          
+          DETECTED_KEYWORDS=()
+          CORE_TESTS_CHANGED="false"
+          
+          # 2. Parse the paths line by line
+          for file in $ALL_CHANGED_FILES; do
+            if [[ "$file" =~ ^src/trees/([^/]+)/ ]]; then
+              # Extract the subpackage folder name directly from the path string
+              FOLDER_NAME="${BASH_REMATCH[1]}"
+              if [ "$FOLDER_NAME" != "base" ]; then
+                DETECTED_KEYWORDS+=("$FOLDER_NAME")
+              fi
+            elif [[ "$file" =~ ^test/ || "$file" == "pyproject.toml" || "$file" == "requirements.txt" ]]; then
+              # If someone touches the global test suite or configs, run everything
+              CORE_TESTS_CHANGED="true"
+            fi
+          done
+          
+          # 3. Filter out duplicate directory names
+          UNIQUE_KEYWORDS=($(echo "${DETECTED_KEYWORDS[@]}" | tr ' ' '\n' | sort -u | tr '\n' ' '))
+          
+          # 4. Construct the execution filter string
+          PYTEST_FILTER=""
+          if [ "$CORE_TESTS_CHANGED" = "false" ] && [ ${#UNIQUE_KEYWORDS[@]} -gt 0 ]; then
+            # Format the array into a pytest expression: "bst or native or avl" (example tree names)
+            JOINED_EXPR=$(printf " or %s" "${UNIQUE_KEYWORDS[@]}")
+            JOINED_EXPR=${JOINED_EXPR:4}  # Trim the leading " or "
+            PYTEST_FILTER="-k \"$JOINED_EXPR\""
+          fi
+          
+          echo "Executing pipeline with filter: $PYTEST_FILTER"
+          
+          pytest test/ --benchmark-only --benchmark-json=benchmark_results.json $PYTEST_FILTER
 
       - name: Continuous Performance Tracking
         uses: benchmark-action/github-action-benchmark@v1
