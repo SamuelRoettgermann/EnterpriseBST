@@ -1,4 +1,4 @@
-from node import Node
+from .node import Node
 
 
 class LeafNode[T](Node[T]):
@@ -18,7 +18,7 @@ class LeafNode[T](Node[T]):
         return self
 
     def insert(self, value: T) -> Node[T]:
-        from node import ValueNode
+        from trees.bst.node import ValueNode
 
         return ValueNode(value)
 

@@ -1,7 +1,7 @@
 import random
 import sys
 import unittest
-from bst import BST
+from trees.bst.bst import BST
 
 
 class TestBST(unittest.TestCase):

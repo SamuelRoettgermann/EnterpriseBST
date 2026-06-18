@@ -1,4 +1,4 @@
-from node import Node
+from .node import Node
 
 
 class ValueNode[T](Node[T]):
@@ -7,7 +7,7 @@ class ValueNode[T](Node[T]):
     _right: Node[T]
 
     def __init__(self, value: T):
-        from node import LeafNode
+        from trees.bst.node import LeafNode
 
         self._val = value
         self._left = LeafNode[T]()

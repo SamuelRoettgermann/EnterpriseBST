@@ -1,7 +1,7 @@
 import collections.abc
 
-from bst_iterator import BSTIterator
-from node import Node, LeafNode
+from .bst_iterator import BSTIterator
+from .node import Node, LeafNode
 
 
 class BST[T](collections.abc.Iterable):

@@ -1,7 +1,7 @@
 import random
 import pytest
 import sys
-from bst import BST
+from trees.bst.bst import BST
 
 sys.setrecursionlimit(1_000_000)
 
