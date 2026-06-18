@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1781814188440,
+  "lastUpdate": 1781817089827,
   "repoUrl": "https://github.com/SamuelRoettgermann/EnterpriseBST",
   "entries": {
     "Benchmark": [
@@ -86,6 +86,47 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.000006071582551945833",
             "extra": "mean: 150.17651731738997 usec\nrounds: 6814"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "SamuelRoettgermann",
+            "username": "SamuelRoettgermann"
+          },
+          "committer": {
+            "name": "SamuelRoettgermann",
+            "username": "SamuelRoettgermann"
+          },
+          "id": "98ddbaf4000966f22be0d61101a94d927f0f04bd",
+          "message": "Generalized Tree structure and Dynamic Benchmarks",
+          "timestamp": "2026-06-18T20:22:18Z",
+          "url": "https://github.com/SamuelRoettgermann/EnterpriseBST/pull/11/commits/98ddbaf4000966f22be0d61101a94d927f0f04bd"
+        },
+        "date": 1781817089510,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "test/test_benchmark_bst.py::test_insertion_random",
+            "value": 7.70000670986289,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0014742280129167874",
+            "extra": "mean: 129.87001669999927 msec\nrounds: 30"
+          },
+          {
+            "name": "test/test_benchmark_bst.py::test_insertion_sorted",
+            "value": 2.495698392413477,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0019434819096861102",
+            "extra": "mean: 400.68944349999975 msec\nrounds: 30"
+          },
+          {
+            "name": "test/test_benchmark_bst.py::test_search_hit",
+            "value": 5774.847456832966,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000012579831985453748",
+            "extra": "mean: 173.16474720328262 usec\nrounds: 5989"
           }
         ]
       }
