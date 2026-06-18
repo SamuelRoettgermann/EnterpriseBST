@@ -41,7 +41,3 @@ jobs:
 
       - name: Run tests
         run: pytest test/
-
-      - name: Run benchmarks
-        run: |
-          echo "Executing performance benchmarks..."
