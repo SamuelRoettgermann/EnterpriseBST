@@ -1,7 +1,10 @@
+import collections.abc
+
+from bst_iterator import BSTIterator
 from node import Node, LeafNode
 
 
-class BST[T]:
+class BST[T](collections.abc.Iterable):
     root: Node[T]
 
     def __init__(self):
@@ -28,3 +31,6 @@ class BST[T]:
 
     def __str__(self):
         return str(self.root)
+
+    def __iter__(self):
+        return BSTIterator(self.root)
