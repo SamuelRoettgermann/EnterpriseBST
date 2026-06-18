@@ -4,6 +4,10 @@ import unittest
 from trees.bst.bst import BST
 
 
+def test_tree_construction(tree_factory):
+    assert tree_factory[int]() is not None
+
+
 class TestBST(unittest.TestCase):
 
     @classmethod
@@ -155,7 +159,3 @@ class TestBST(unittest.TestCase):
         self._set_up_int_tree(1000)
 
         self.assertEqual([value for value in self.bst], list(range(1000)))
-
-
-if __name__ == "__main__":
-    unittest.main()
