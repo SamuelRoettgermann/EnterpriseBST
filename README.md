@@ -27,7 +27,7 @@ The long-term vision is for this project to become a comprehensive library for v
 
 1. Clone the repository:
    ```bash
-   git clone <repository-url>
+   git clone git@github.com:SamuelRoettgermann/EnterpriseBST.git  -- or https://github.com/SamuelRoettgermann/EnterpriseBST.git if you use HTTPS
    cd EnterpriseBST
    ```
 
@@ -41,7 +41,7 @@ The long-term vision is for this project to become a comprehensive library for v
 Run the test suite using `pytest`:
 
 ```bash
-pytest test/test_bst.py
+pytest test
 ```
 
 ## Contributing
