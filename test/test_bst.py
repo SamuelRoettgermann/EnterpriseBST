@@ -135,7 +135,6 @@ class TestBST(unittest.TestCase):
                 self.assertEqual(inner_value, j)
                 j += 1
 
-
     def test_enumerate(self):
         self._set_up_int_tree(1000)
 
@@ -151,6 +150,11 @@ class TestBST(unittest.TestCase):
     def test_empty_iterator(self):
         for _ in self.bst:
             self.assertFalse(True)
+
+    def test_list_comprehension(self):
+        self._set_up_int_tree(1000)
+
+        self.assertEqual([value for value in self.bst], list(range(1000)))
 
 
 if __name__ == "__main__":
