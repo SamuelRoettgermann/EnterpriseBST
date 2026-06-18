@@ -8,6 +8,10 @@ on:
     branches:
       - '**'
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   ci-pipeline:
     runs-on: ubuntu-latest
@@ -19,7 +23,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.13'
+          python-version: '3.14'
           cache: 'pip'
 
       - name: Install dependencies
@@ -40,4 +44,19 @@ jobs:
           black --check ${{ steps.changed-files.outputs.all_changed_files }}
 
       - name: Run tests
-        run: pytest test/
+        run: pytest test/ --benchmark-skip
+
+      - name: Run benchmarks
+        run: |
+          pytest test/ --benchmark-only --benchmark-json=benchmark_results.json
+
+      - name: Continuous Performance Tracking
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          tool: 'pytest'
+          output-file-path: benchmark_results.json
+          summary-always: true     # Always write to the silent Actions dashboard page
+          comment-on-alert: true   # ONLY drop a PR comment if performance degenerates heavily
+          fail-on-alert: false
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          auto-push: true

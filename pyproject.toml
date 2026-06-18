@@ -1,2 +1,7 @@
 [tool.pytest.ini_options]
 pythonpath = ["src"]
+addopts = """
+    --benchmark-warmup=on
+    --benchmark-disable-gc
+    --benchmark-min-rounds=30
+"""
