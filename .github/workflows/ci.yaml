@@ -58,5 +58,4 @@ jobs:
           summary-always: true     # Always write to the silent Actions dashboard page
           comment-on-alert: true   # ONLY drop a PR comment if performance degenerates heavily
           fail-on-alert: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
