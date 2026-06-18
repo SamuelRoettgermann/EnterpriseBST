@@ -1,7 +1,6 @@
 import abc
 
 
-
 class Node[T](abc.ABC):
     @property
     @abc.abstractmethod

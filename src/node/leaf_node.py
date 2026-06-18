@@ -7,7 +7,7 @@ class LeafNode[T](Node[T]):
 
     @property
     def value(self) -> T:
-        raise ValueError('a leaf does not have a value')
+        raise ValueError("a leaf does not have a value")
 
     @property
     def smaller(self) -> Node[T]:
