@@ -44,9 +44,11 @@ jobs:
           black --check ${{ steps.changed-files.outputs.all_changed_files }}
 
       - name: Run tests
+        if: steps.changed-files.outputs.any_changed == 'true'
         run: pytest test/ --benchmark-skip
 
       - name: Run affected benchmarks
+        if: steps.changed-files.outputs.any_changed == 'true'
         run: |
           # 1. Grab the list of all files changed in this push/PR
           ALL_CHANGED_FILES="${{ steps.changed-files.outputs.all_changed_files }}"
@@ -85,6 +87,7 @@ jobs:
           pytest test/ --benchmark-only --benchmark-json=benchmark_results.json $PYTEST_FILTER
 
       - name: Continuous Performance Tracking
+        if: steps.changed-files.outputs.any_changed == 'true'
         uses: benchmark-action/github-action-benchmark@v1
         with:
           tool: 'pytest'
