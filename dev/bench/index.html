@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EnterpriseBST | Performance Metrics Hub</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f6f8fa;
+            color: #24292f;
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            max-width: 800px;
+            width: 100%;
+        }
+        header {
+            margin-bottom: 40px;
+            border-bottom: 1px solid #d0d7de;
+            padding-bottom: 20px;
+        }
+        h1 {
+            font-size: 2rem;
+            margin: 0 0 8px 0;
+        }
+        p {
+            color: #57606a;
+            margin: 0;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .card {
+            background: #ffffff;
+            border: 1px solid #d0d7de;
+            border-radius: 6px;
+            padding: 24px;
+            text-decoration: none;
+            color: inherit;
+            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            border-color: #0969da;
+            box-shadow: 0 4px 12px rgba(140, 149, 159, 0.15);
+        }
+        .card h2 {
+            font-size: 1.25rem;
+            margin: 0 0 10px 0;
+            color: #0969da;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .card h2::after {
+            content: "→";
+            transition: transform 0.2s;
+        }
+        .card:hover h2::after {
+            transform: translateX(4px);
+        }
+        .card p {
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>EnterpriseBST Performance Hub</h1>
+        <p>Continuous algorithmic benchmarking and regression tracking timelines.</p>
+    </header>
+
+    <main class="grid">
+        <a href="./dev/bench/bst/index.html" class="card">
+            <h2>BST Architecture</h2>
+            <p>Tracks search, iteration, and insertion performance across core standard binary search trees.</p>
+        </a>
+
+        </main>
+</div>
+
+</body>
+</html>
