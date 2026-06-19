@@ -13,4 +13,4 @@ def tree_factory(request):
     return request.param
 
 
-# """comment or uncomment this to trigger all benchmarks on CI"""
+"""comment or uncomment this to trigger all benchmarks on CI"""
