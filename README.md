@@ -25,7 +25,7 @@ https://samuelroettgermann.github.io/EnterpriseBST/dev/bench/
 
 ### Prerequisites
 
-- Python 3.12+ (uses PEP 695 type parameters like `class Tree[T]`)
+- Python 3.12+ (uses [Variance Inference](https://typing.python.org/en/latest/spec/generics.html#variance-inference) like `class Tree[T]`)
 
 ### Installation
 
