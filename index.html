@@ -93,14 +93,15 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-// github-action-benchmark writes data into data.js as a global window variable.
-// To prevent collision, we fetch it as text, strip the assignment, and parse it as JSON.
+// Fetch raw text, isolate the JSON payload securely, and parse it.
 async function loadTreeData(treeName) {
     try {
         const response = await fetch(`./dev/bench/${treeName}/data.js`);
         if (!response.ok) return null;
         const text = await response.text();
-        const cleanJsonText = text.replace(/^window\.BENCHMARK_DATA\s*=\s*/, '').replace(/;\s*$/, '');
+        
+        // .trim() prevents leading newlines/spaces from breaking the regex line-start (^) anchor
+        const cleanJsonText = text.trim().replace(/^window\.BENCHMARK_DATA\s*=\s*/, '').replace(/;\s*$/, '');
         return JSON.parse(cleanJsonText);
     } catch (e) {
         console.warn(`Data pool for [${treeName}] not generated or reachable yet.`);
@@ -112,7 +113,6 @@ async function renderComparisonChart() {
     const bstRaw = await loadTreeData('bst');
     const avlRaw = await loadTreeData('avl');
 
-    // Find the specific key tracking sorted sequence insertions
     const findKey = (data) => data ? Object.keys(data.entries).find(k => k.includes('sorted_sequence')) : null;
     
     const bstKey = findKey(bstRaw);
@@ -121,13 +121,21 @@ async function renderComparisonChart() {
     const bstHistory = bstKey ? bstRaw.entries[bstKey] : [];
     const avlHistory = avlKey ? avlRaw.entries[avlKey] : [];
 
-    // Extract and align the unique commit hashes across both datasets for the X-axis
-    const uniqueCommits = Array.from(new Set([
-        ...bstHistory.map(h => h.commit.id.substring(0, 7)),
-        ...avlHistory.map(h => h.commit.id.substring(0, 7))
-    ])).sort(); // Chronological alignment depends on your commit histories
+    // --- CHRONOLOGICAL TIMELINE ALIGNMENT FIX ---
+    // Map each 7-character commit SHA to its actual git timestamp to preserve the chronological axis
+    const commitTimestamps = {};
+    bstHistory.forEach(h => {
+        const sha = h.commit.id.substring(0, 7);
+        commitTimestamps[sha] = new Date(h.commit.timestamp || h.date);
+    });
+    avlHistory.forEach(h => {
+        const sha = h.commit.id.substring(0, 7);
+        commitTimestamps[sha] = new Date(h.commit.timestamp || h.date);
+    });
 
-    // Map metrics matching the respective commit hashes
+    // Sort hashes by actual timestamp age instead of alphabetical sorting
+    const uniqueCommits = Object.keys(commitTimestamps).sort((a, b) => commitTimestamps[a] - commitTimestamps[b]);
+
     const mapDataset = (history) => uniqueCommits.map(sha => {
         const dataPoint = history.find(h => h.commit.id.startsWith(sha));
         return dataPoint?.value ?? null;
@@ -136,7 +144,6 @@ async function renderComparisonChart() {
     const bstPoints = mapDataset(bstHistory);
     const avlPoints = mapDataset(avlHistory);
 
-    // Render unified canvas
     const ctx = document.getElementById('comparisonChart').getContext('2d');
     new Chart(ctx, {
         type: 'line',
@@ -171,7 +178,7 @@ async function renderComparisonChart() {
                     title: { display: true, text: 'Throughput (iter/sec)' },
                     beginAtZero: true
                 },
-                x: { title: { display: true, text: 'Commit SHA' } }
+                x: { title: { display: true, text: 'Commit SHA (Chronological)' } }
             }
         }
     });
