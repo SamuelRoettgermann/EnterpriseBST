@@ -83,7 +83,6 @@ def test_removal_and_empty_state_unification_properties(
     expected_length = len(unique_elements)
 
     for element in unique_elements:
-        print(f"Removing {element}")
         assert element in tree
 
         assert tree.remove(element) is True
