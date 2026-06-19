@@ -1,6 +1,6 @@
 import collections
 
-from node import Node
+from .node import Node
 
 
 class BSTIterator[T](collections.abc.Iterator[T]):

@@ -1,4 +1,4 @@
-from bst import BST
+from trees import BST
 
 if __name__ == "__main__":
     bst = BST[int]()

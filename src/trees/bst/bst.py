@@ -1,10 +1,11 @@
 import collections.abc
 
-from bst_iterator import BSTIterator
-from node import Node, LeafNode
+from .bst_iterator import BSTIterator
+from .node import Node, LeafNode
+from ..base import Tree
 
 
-class BST[T](collections.abc.Iterable):
+class BST[T](Tree[T]):
     root: Node[T]
 
     def __init__(self):
@@ -25,6 +26,9 @@ class BST[T](collections.abc.Iterable):
         was_present = self.search(value)
         self.root = self.root.remove(value)
         return was_present
+
+    def depth(self) -> int:
+        return self.root.depth()
 
     def __len__(self):
         return len(self.root)
