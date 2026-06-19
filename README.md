@@ -10,19 +10,16 @@ It's a toy project that takes its structure seriously.
 ## What’s in the repo today
 
 - General scaffolding for adding tree implementations (module layout, tests, and benchmarking hooks)
-- A reference, unbalanced Binary Search Tree for comparable values
-  - Operations: `insert` / `search` (`in`) / `remove` / `depth`
-  - Duplicate inserts are ignored (idempotent, set‑like semantics)
-  - size via `len(bst)`
-  - Readable ASCII representation via `str(bst)`
-  - `__iter__` is in-order (subject to change later)
-- Fully typed using Python generics (PEP 695)
 - Comprehensive unit tests and micro‑benchmarks (pytest + pytest‑benchmark)
 
-### Implemented trees
+### Trees
+- [x] Tree interface (PyDoc describes how it could be extended)
 - [x] Binary Search Tree (unbalanced)
 - [ ] Binary Search Tree (balanced)
 - [ ] Native Python (wrapper around `set`; I know it's not a tree... suggest something better)
+
+### Benchmark Results
+https://samuelroettgermann.github.io/EnterpriseBST/dev/bench/
 
 ## Getting Started
 
