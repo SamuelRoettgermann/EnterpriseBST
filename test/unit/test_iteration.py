@@ -26,7 +26,7 @@ def test_for_loop_multiple_elements(tree):
         i += 1
 
 
-def test_iterators_do_not_influence_other_iterators(tree):
+def test_iter_returns_a_fresh_iterator(tree):
     populate_tree(tree, 100)
 
     i = 0
