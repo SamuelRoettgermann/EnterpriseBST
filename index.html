@@ -52,11 +52,12 @@
             border: 1px solid #d0d7de;
             border-radius: 6px;
             padding: 24px;
+            margin-bottom: 30px;
         }
         .chart-container {
             position: relative;
             width: 100%;
-            height: 400px;
+            height: 350px;
         }
     </style>
 </head>
@@ -79,15 +80,9 @@
         </a>
     </main>
 
-    <section class="chart-section">
-        <h2>Cross-Architecture Battleground: Sorted Insertion</h2>
-        <p style="margin-bottom: 20px; font-size: 0.9rem; color: #57606a;">
-            Comparing worst-case linear insertions across structures. Higher values are better (iter/sec).
-        </p>
-        <div class="chart-container">
-            <canvas id="comparisonChart"></canvas>
-        </div>
-    </section>
+    <div id="chartsContainer">
+        <div style="text-align: center; color: #57606a; padding: 40px;">Loading historical battleground matrices...</div>
+    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -108,33 +103,54 @@ async function loadTreeData(treeName) {
     }
 }
 
-async function renderComparisonChart() {
+// Helper to normalize test names by removing architectural brackets ([BST] or [AVL])
+function normalizeBenchmarkName(name) {
+    return name.replace(/\[(BST|AVL)\]/gi, '').trim();
+}
+
+// Transforms a raw string like "test_insertion_random_sequence" into a clean header string
+function formatDisplayTitle(rawName) {
+    const baseName = rawName.split('::').pop();
+    return baseName
+        .replace(/_/g, ' ')
+        .replace(/\b\w/g, char => char.toUpperCase());
+}
+
+async function renderAllPerformanceCharts() {
     const bstRaw = await loadTreeData('bst');
     const avlRaw = await loadTreeData('avl');
 
     const getSuiteHistory = (raw) => {
-      if (!raw || !raw.entries) return [];
-      return Object.values(raw.entries).flat();
+        if (!raw || !raw.entries) return [];
+        return Object.values(raw.entries).flat();
     };
     
     const bstHistory = getSuiteHistory(bstRaw);
     const avlHistory = getSuiteHistory(avlRaw);
 
-    // --- CHRONOLOGICAL TIMELINE ALIGNMENT ---
-    const commitTimestamps = {};
-    bstHistory.forEach(h => {
-        const sha = h.commit.id.substring(0, 7);
-        commitTimestamps[sha] = new Date(h.commit.timestamp || h.date);
-    });
-    avlHistory.forEach(h => {
-        const sha = h.commit.id.substring(0, 7);
-        commitTimestamps[sha] = new Date(h.commit.timestamp || h.date);
-    });
+    const chartsContainer = document.getElementById('chartsContainer');
 
-    // Sort SHAs by actual historical timeline sequence
+    if (bstHistory.length === 0 && avlHistory.length === 0) {
+        chartsContainer.innerHTML = '<div style="text-align: center; color: #cf222e; padding: 40px;">No diagnostic baseline matrices loaded yet.</div>';
+        return;
+    }
+
+    // --- 1. CHRONOLOGICAL TIMELINE ALIGNMENT ---
+    const commitTimestamps = {};
+    const extractTimestamps = (history) => {
+        history.forEach(h => {
+            if (h.commit && h.commit.id) {
+                const sha = h.commit.id.substring(0, 7);
+                commitTimestamps[sha] = new Date(h.commit.timestamp || h.date);
+            }
+        });
+    };
+    extractTimestamps(bstHistory);
+    extractTimestamps(avlHistory);
+
+    // Sort unique repository wide commit SHAs by actual execution dates
     const uniqueCommits = Object.keys(commitTimestamps).sort((a, b) => commitTimestamps[a] - commitTimestamps[b]);
 
-    // --- NEW: Map the sorted SHAs to human-readable date strings ---
     const formattedLabels = uniqueCommits.map(sha => {
         const date = commitTimestamps[sha];
         return date.toLocaleDateString('en-GB', {
@@ -143,76 +159,118 @@ async function renderComparisonChart() {
             year: 'numeric',
             hour: '2-digit',
             minute: '2-digit'
-        }); // Outputs format: "DD/MM/YYYY, HH:MM"
+        });
     });
 
-    // Dataset array keeps matching indices perfectly with uniqueCommits layout
-    const mapDataset = (history, testKeyword) => uniqueCommits.map(sha => {
-        const commitRun = history.find(h => h.commit.id.startsWith(sha));
-        if (!commitRun || !commitRun.benches) return null;
+    // --- 2. EXTRACT ALL UNIQUE BENCHMARK IDENTIFIERS ---
+    const benchmarkSuites = new Set();
+    const discoverSuites = (history) => {
+        history.forEach(run => {
+            if (run.benches) {
+                run.benches.forEach(b => {
+                    benchmarkSuites.add(normalizeBenchmarkName(b.name));
+                });
+            }
+        });
+    };
+    discoverSuites(bstHistory);
+    discoverSuites(avlHistory);
+
+    // Clear loading indicators
+    chartsContainer.innerHTML = '';
+
+    // --- 3. DYNAMICALLY GENERATE SECTION & CANVAS PER BENCHMARK ---
+    benchmarkSuites.forEach(benchId => {
         
-        const matchingBench = commitRun.benches.find(b => b.name.toLowerCase().includes(testKeyword.toLowerCase()));
-        return matchingBench ? matchingBench.value : null;
-    });
+        // Helper to extract values aligned perfectly with the unique chronological axis map
+        const mapDatasetPoints = (history) => uniqueCommits.map(sha => {
+            const commitRun = history.find(h => h.commit.id.startsWith(sha));
+            if (!commitRun || !commitRun.benches) return null;
+            
+            const matchingBench = commitRun.benches.find(b => normalizeBenchmarkName(b.name) === benchId);
+            return matchingBench ? matchingBench.value : null;
+        });
 
-    const bstPoints = mapDataset(bstHistory, 'insert'); 
-    const avlPoints = mapDataset(avlHistory, 'insert');
+        const bstPoints = mapDatasetPoints(bstHistory);
+        const avlPoints = mapDatasetPoints(avlHistory);
 
-    const ctx = document.getElementById('comparisonChart').getContext('2d');
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: formattedLabels, // Render timestamps on the X-Axis
-            datasets: [
-                {
-                    label: 'Standard BST',
-                    data: bstPoints,
-                    borderColor: '#afb8c1',
-                    backgroundColor: '#afb8c1',
-                    borderWidth: 2,
-                    tension: 0.1,
-                    spanGaps: true
-                },
-                {
-                    label: 'Self-Balancing AVL',
-                    data: avlPoints,
-                    borderColor: '#0969da',
-                    backgroundColor: '#0969da',
-                    borderWidth: 2,
-                    tension: 0.1,
-                    spanGaps: true
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    title: { display: true, text: 'Throughput (iter/sec)' },
-                    beginAtZero: true
-                },
-                x: { 
-                    title: { display: true, text: 'Timeline (Chronological)' } 
-                }
+        // Build HTML components dynamically matching your styling rules
+        const section = document.createElement('section');
+        section.className = 'chart-section';
+
+        const h2 = document.createElement('h2');
+        h2.textContent = formatDisplayTitle(benchId);
+        section.appendChild(h2);
+
+        const p = document.createElement('p');
+        p.style.cssText = "margin-bottom: 20px; font-size: 0.9rem; color: #57606a; word-break: break-all;";
+        p.textContent = `Suite Identity: ${benchId} • Higher values are better (iter/sec).`;
+        section.appendChild(p);
+
+        const chartContainer = document.createElement('div');
+        chartContainer.className = 'chart-container';
+        
+        const canvas = document.createElement('canvas');
+        chartContainer.appendChild(canvas);
+        section.appendChild(chartContainer);
+        
+        chartsContainer.appendChild(section);
+
+        // Initialize a standalone line chart instance per canvas context
+        new Chart(canvas.getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: formattedLabels,
+                datasets: [
+                    {
+                        label: 'Standard BST',
+                        data: bstPoints,
+                        borderColor: '#afb8c1',
+                        backgroundColor: '#afb8c1',
+                        borderWidth: 2,
+                        tension: 0.1,
+                        spanGaps: true
+                    },
+                    {
+                        label: 'Self-Balancing AVL',
+                        data: avlPoints,
+                        borderColor: '#0969da',
+                        backgroundColor: '#0969da',
+                        borderWidth: 2,
+                        tension: 0.1,
+                        spanGaps: true
+                    }
+                ]
             },
-            plugins: {
-                // --- OPTIONAL UX ADDITION: Shows the SHA on hover tooltips ---
-                tooltip: {
-                    callbacks: {
-                        title: function(context) {
-                            const index = context[0].dataIndex;
-                            const targetSha = uniqueCommits[index];
-                            return `Commit: ${targetSha} (${formattedLabels[index]})`;
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        title: { display: true, text: 'Throughput (iter/sec)' },
+                        beginAtZero: true
+                    },
+                    x: { 
+                        title: { display: true, text: 'Timeline (Chronological)' } 
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            title: function(context) {
+                                const index = context[0].dataIndex;
+                                const targetSha = uniqueCommits[index];
+                                return `Commit: ${targetSha} (${formattedLabels[index]})`;
+                            }
                         }
                     }
                 }
             }
-        }
+        });
     });
 }
 
-document.addEventListener('DOMContentLoaded', renderComparisonChart);
+document.addEventListener('DOMContentLoaded', renderAllPerformanceCharts);
 </script>
 </body>
 </html>
