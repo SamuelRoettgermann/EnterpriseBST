@@ -15,7 +15,7 @@ It's a toy project that takes its silly structure seriously.
 ### Trees
 - [x] Tree interface (PyDoc describes how it could be extended)
 - [x] Binary Search Tree (unbalanced)
-- [ ] Binary Search Tree (balanced)
+- [X] Binary Search Tree (balanced) (AVL)
 - [ ] Native Python (wrapper around `set`; I know it's not a tree... suggest something better)
 
 ### Benchmark Results
