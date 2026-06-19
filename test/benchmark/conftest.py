@@ -8,8 +8,16 @@ def sorted_data_small():
 
 
 @pytest.fixture
+def random_data_small():
+    data = list(range(1_000))
+    random.shuffle(data)
+
+    return data
+
+
+@pytest.fixture
 def random_data():
-    xs = list(range(4_000))
+    xs = list(range(10_000))
     random.shuffle(xs)
     return xs
 
