@@ -38,7 +38,7 @@ https://samuelroettgermann.github.io/EnterpriseBST/dev/bench/
 
 2. Install dependencies:
    ```bash
-   pip install -r requirements.txt
+   pip install ".[dev]"
    ```
 
 ### Quick start (BST example)

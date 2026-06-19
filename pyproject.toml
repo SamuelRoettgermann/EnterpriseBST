@@ -1,3 +1,30 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "EnterpriseBST"
+version = "0.1.0"
+description = "A small lab for tree data structures in Python"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "black==24.1.0",
+    "pytest==9.1.0",
+    "pre-commit==4.6.0",
+    "pytest-benchmark==5.2.3",
+    "hypothesis==6.155.5",
+]
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
 [tool.pytest.ini_options]
 pythonpath = ["src"]
 addopts = """
