@@ -2,7 +2,7 @@ window.BENCHMARK_DATA = {
   "lastUpdate": 1781901262532,
   "repoUrl": "https://github.com/SamuelRoettgermann/EnterpriseBST",
   "entries": {
-    "Benchmark": [
+    "bst": [
       {
         "commit": {
           "author": {
@@ -162,9 +162,7 @@ window.BENCHMARK_DATA = {
             "extra": "mean: 100.02120882053995 usec\nrounds: 10521"
           }
         ]
-      }
-    ],
-    "bst Architecture": [
+      },
       {
         "commit": {
           "author": {
