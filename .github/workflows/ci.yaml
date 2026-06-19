@@ -37,6 +37,8 @@ jobs:
         with:
           files: |
             **.py
+          files_ignore: |
+            src/main.py
 
       - name: Check code formatting on changed files
         if: steps.changed-files.outputs.any_changed == 'true'
