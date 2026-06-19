@@ -130,7 +130,7 @@ async function renderComparisonChart() {
     // Map metrics matching the respective commit hashes
     const mapDataset = (history) => uniqueCommits.map(sha => {
         const dataPoint = history.find(h => h.commit.id.startsWith(sha));
-        return dataPoint?.value
+        return dataPoint?.value ?? null;
     });
 
     const bstPoints = mapDataset(bstHistory);
