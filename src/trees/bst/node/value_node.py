@@ -32,7 +32,7 @@ class ValueNode[T](Node[T]):
     def is_leaf(self) -> bool:
         return False
 
-    def insert(self, value: T) -> "Node[T]":
+    def insert(self, value: T) -> Node[T]:
         if value == self.value:
             return self
 
@@ -52,11 +52,11 @@ class ValueNode[T](Node[T]):
         else:
             return self._right.search(value)
 
-    def remove(self, value: T) -> "Node[T]":
+    def remove(self, value: T) -> Node[T]:
         if value == self.value:
             if not self._left.is_leaf() and not self._right.is_leaf():
-                self.value = self._left.value
-                self._left = self._left.remove(self.value)
+                self.value = min(self._right)
+                self._right = self._right.remove(self.value)
                 return self
 
             if self._right.is_leaf():
@@ -103,3 +103,8 @@ class ValueNode[T](Node[T]):
             )
 
         return lines
+
+    def __iter__(self):
+        yield from self._left
+        yield self._val
+        yield from self._right

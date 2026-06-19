@@ -25,7 +25,7 @@ class LeafNode[T](Node[T]):
     def search(self, value: T) -> bool:
         return False
 
-    def remove(self, value: T) -> "Node[T]":
+    def remove(self, value: T) -> Node[T]:
         return self
 
     def depth(self) -> int:
@@ -44,3 +44,6 @@ class LeafNode[T](Node[T]):
         # If this leaf is a child, represent it with a subtle dot to show missing branches
         pointer = "├── [L] " if is_left else "└── [R] "
         return [f"{prefix}{pointer}·"]
+
+    def __iter__(self):
+        yield from []

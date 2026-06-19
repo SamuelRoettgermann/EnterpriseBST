@@ -1,7 +1,8 @@
 import abc
+import collections
 
 
-class Node[T](abc.ABC):
+class Node[T](abc.ABC, collections.abc.Iterable[T]):
     @property
     @abc.abstractmethod
     def value(self) -> T: ...
