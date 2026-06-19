@@ -13,9 +13,71 @@ permissions:
   pull-requests: write
 
 jobs:
-  ci-pipeline:
+  detect-changes:
     runs-on: ubuntu-latest
+    outputs:
+      run_benchmarks: ${{ steps.filter.outputs.run_benchmarks }}
+      trees: ${{ steps.filter.outputs.trees }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v45
+        with:
+          files: |
+            **.py
+          files_ignore: |
+            src/main.py
+
+      - name: Determine Benchmark Scope
+        id: filter
+        run: |
+          # If no Python files changed, exit early to skip benchmarks completely
+          if [ "${{ steps.changed-files.outputs.any_changed }}" != "true" ]; then
+            echo "run_benchmarks=false" >> $GITHUB_OUTPUT
+            echo "trees=[]" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          ALL_CHANGED_FILES="${{ steps.changed-files.outputs.all_changed_files }}"
+          DETECTED_KEYWORDS=()
+          CORE_TESTS_CHANGED="false"
+
+          # Parse affected areas
+          for file in $ALL_CHANGED_FILES; do
+            if [[ "$file" =~ ^src/trees/([^/]+)/ ]]; then
+              FOLDER_NAME="${BASH_REMATCH[1]}"
+              if [ "$FOLDER_NAME" != "base" ]; then
+                DETECTED_KEYWORDS+=("$FOLDER_NAME")
+              fi
+            elif [[ "$file" =~ ^test/ || "$file" == "pyproject.toml" || "$file" == "requirements.txt" || "$file" == ".github/workflows/"* ]]; then
+              CORE_TESTS_CHANGED="true"
+            fi
+          done
+
+          # Deduplicate
+          UNIQUE_KEYWORDS=($(echo "${DETECTED_KEYWORDS[@]}" | tr ' ' '\n' | sort -u | tr '\n' ' '))
+
+          # CRITICAL FIX: If global files or core configs change, we must update EVERY timeline
+          if [ "$CORE_TESTS_CHANGED" = "true" ]; then
+            UNIQUE_KEYWORDS=($(find src/trees -mindepth 1 -maxdepth 1 -type d -not -name "base" -exec basename {} \;))
+          fi
+
+          if [ ${#UNIQUE_KEYWORDS[@]} -eq 0 ]; then
+            echo "run_benchmarks=false" >> $GITHUB_OUTPUT
+            echo "trees=[]" >> $GITHUB_OUTPUT
+          else
+            # Convert the Bash array into a clean JSON array string for the GHA Matrix engine
+            MATRIX_JSON=$(printf '%s\n' "${UNIQUE_KEYWORDS[@]}" | jq -R . | jq -s -c .)
+            echo "run_benchmarks=true" >> $GITHUB_OUTPUT
+            echo "trees=$MATRIX_JSON" >> $GITHUB_OUTPUT
+          fi
+
+  standard-ci:
+    needs: detect-changes
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -29,73 +91,52 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt 
+          pip install -r requirements.txt
 
-      - name: Get changed files
-        id: changed-files
-        uses: tj-actions/changed-files@v45
+      - name: Check code formatting
+        run: black --check .
+
+      - name: Run unit tests
+        run: pytest --benchmark-skip
+
+  run-benchmarks:
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.run_benchmarks == 'true' }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # Spawns an isolated job runner instance for each tree string inside our JSON array
+        tree: ${{ fromJson(needs.detect-changes.outputs.trees) }}
+      fail-fast: false
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          files: |
-            **.py
-          files_ignore: |
-            src/main.py
+          python-version: '3.14'
+          cache: 'pip'
 
-      - name: Check code formatting on changed files
-        if: steps.changed-files.outputs.any_changed == 'true'
+      - name: Install dependencies
         run: |
-          black --check ${{ steps.changed-files.outputs.all_changed_files }}
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-      - name: Run tests
-        if: steps.changed-files.outputs.any_changed == 'true'
-        run: pytest test/ --benchmark-skip
-
-      - name: Run affected benchmarks
-        if: steps.changed-files.outputs.any_changed == 'true'
+      # Execute isolated subset matching exactly the matrix identifier
+      - name: Run benchmarks for ${{ matrix.tree }}
         run: |
-          # 1. Grab the list of all files changed in this push/PR
-          ALL_CHANGED_FILES="${{ steps.changed-files.outputs.all_changed_files }}"
-          
-          DETECTED_KEYWORDS=()
-          CORE_TESTS_CHANGED="false"
-          
-          # 2. Parse the paths line by line
-          for file in $ALL_CHANGED_FILES; do
-            if [[ "$file" =~ ^src/trees/([^/]+)/ ]]; then
-              # Extract the subpackage folder name directly from the path string
-              FOLDER_NAME="${BASH_REMATCH[1]}"
-              if [ "$FOLDER_NAME" != "base" ]; then
-                DETECTED_KEYWORDS+=("$FOLDER_NAME")
-              fi
-            elif [[ "$file" =~ ^test/ || "$file" == "pyproject.toml" || "$file" == "requirements.txt" ]]; then
-              # If someone touches the global test suite or configs, run everything
-              CORE_TESTS_CHANGED="true"
-            fi
-          done
-          
-          # 3. Filter out duplicate directory names
-          UNIQUE_KEYWORDS=($(echo "${DETECTED_KEYWORDS[@]}" | tr ' ' '\n' | sort -u | tr '\n' ' '))
-          
-          # 4. Construct the execution filter string
-          PYTEST_FILTER=""
-          if [ "$CORE_TESTS_CHANGED" = "false" ] && [ ${#UNIQUE_KEYWORDS[@]} -gt 0 ]; then
-            # Format the array into a pytest expression: "bst or native or avl" (example tree names)
-            JOINED_EXPR=$(printf " or %s" "${UNIQUE_KEYWORDS[@]}")
-            JOINED_EXPR=${JOINED_EXPR:4}  # Trim the leading " or "
-            PYTEST_FILTER="-k \"$JOINED_EXPR\""
-          fi
-          
-          echo "Executing pipeline with filter: $PYTEST_FILTER"
-          
-          pytest test/ --benchmark-only --benchmark-json=benchmark_results.json $PYTEST_FILTER
+          pytest --benchmark-only -k "${{ matrix.tree }}" --benchmark-json=benchmark_results.json
 
+      # Commits data strictly to its own dedicated structural path timeline
       - name: Continuous Performance Tracking
-        if: steps.changed-files.outputs.any_changed == 'true'
         uses: benchmark-action/github-action-benchmark@v1
         with:
           tool: 'pytest'
           output-file-path: benchmark_results.json
-          summary-always: true     # Always write to the silent Actions dashboard page
-          comment-on-alert: true   # ONLY drop a PR comment if performance degenerates heavily
+          summary-always: true
+          comment-on-alert: true
           fail-on-alert: false
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          auto-push: true
+          auto-push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+          benchmark-data-dir-path: "dev/bench/${{ matrix.tree }}"
