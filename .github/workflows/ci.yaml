@@ -171,7 +171,7 @@ jobs:
         with:
           tool: 'pytest'
           output-file-path: collected-benchmarks/benchmark_results.json
-          name: "${{ matrix.tree }} Architecture"
+          name: "${{ matrix.tree }}"
           github-token: ${{ secrets.GITHUB_TOKEN }}
           auto-push: true
           benchmark-data-dir-path: "dev/bench/${{ matrix.tree }}"
