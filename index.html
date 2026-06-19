@@ -113,9 +113,8 @@ async function renderComparisonChart() {
     const avlRaw = await loadTreeData('avl');
 
     const getSuiteHistory = (raw) => {
-        if (!raw || !raw.entries) return [];
-        const firstKey = Object.keys(raw.entries)[0];
-        return firstKey ? raw.entries[firstKey] : [];
+      if (!raw || !raw.entries) return [];
+      return Object.values(raw.entries).flat();
     };
     
     const bstHistory = getSuiteHistory(bstRaw);
