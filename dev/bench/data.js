@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1781832070777,
+  "lastUpdate": 1781880031203,
   "repoUrl": "https://github.com/SamuelRoettgermann/EnterpriseBST",
   "entries": {
     "Benchmark": [
@@ -521,6 +521,82 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.0000033201858747036987",
             "extra": "mean: 84.48488524550176 usec\nrounds: 12322"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "SamuelRoettgermann",
+            "username": "SamuelRoettgermann"
+          },
+          "committer": {
+            "name": "SamuelRoettgermann",
+            "username": "SamuelRoettgermann"
+          },
+          "id": "58e2fd71be66617042757b3e43246ffcc3608c65",
+          "message": "Add hypothesis Tests",
+          "timestamp": "2026-06-19T02:05:37Z",
+          "url": "https://github.com/SamuelRoettgermann/EnterpriseBST/pull/13/commits/58e2fd71be66617042757b3e43246ffcc3608c65"
+        },
+        "date": 1781880030440,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "test/benchmark/test_benchmark_insert.py::test_insertion_random_sequence[BST]",
+            "value": 28.119094322363406,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0006252901444236925",
+            "extra": "mean: 35.56302306666718 msec\nrounds: 30"
+          },
+          {
+            "name": "test/benchmark/test_benchmark_insert.py::test_insertion_random_sequence_small[BST]",
+            "value": 343.78908012462097,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00001853846456299197",
+            "extra": "mean: 2.9087602190200674 msec\nrounds: 347"
+          },
+          {
+            "name": "test/benchmark/test_benchmark_insert.py::test_insertion_sorted_sequence_small[BST]",
+            "value": 15.129929197473855,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0007902617093028317",
+            "extra": "mean: 66.0941625666671 msec\nrounds: 30"
+          },
+          {
+            "name": "test/benchmark/test_benchmark_iteration.py::test_iteration_full_sweep[BST]",
+            "value": 200.30668747641792,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0001543298004888612",
+            "extra": "mean: 4.992344552239325 msec\nrounds: 201"
+          },
+          {
+            "name": "test/benchmark/test_benchmark_remove.py::test_remove_miss[BST]",
+            "value": 6586.410118820603,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000004046295435561049",
+            "extra": "mean: 151.82777597503528 usec\nrounds: 6718"
+          },
+          {
+            "name": "test/benchmark/test_benchmark_remove.py::test_remove_hit[BST]",
+            "value": 2075.872158647946,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00001844070732496561",
+            "extra": "mean: 481.72523333581313 usec\nrounds: 30"
+          },
+          {
+            "name": "test/benchmark/test_benchmark_search.py::test_search_hit[BST]",
+            "value": 7476.136914235639,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0000034444664583027273",
+            "extra": "mean: 133.75892007754115 usec\nrounds: 7720"
+          },
+          {
+            "name": "test/benchmark/test_benchmark_search.py::test_search_miss[BST]",
+            "value": 7935.755397738506,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000004813571526530031",
+            "extra": "mean: 126.01194843845303 usec\nrounds: 8165"
           }
         ]
       }
