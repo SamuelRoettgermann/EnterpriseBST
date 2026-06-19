@@ -128,9 +128,48 @@ jobs:
         with:
           tool: 'pytest'
           output-file-path: benchmark_results.json
+          name: "${{ matrix.tree }} Architecture"
           summary-always: true
           comment-on-alert: true
           fail-on-alert: false
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          auto-push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+          auto-push: false
+          benchmark-data-dir-path: "dev/bench/${{ matrix.tree }}"
+
+      - name: Upload result artifact
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-${{ matrix.tree }}
+          path: benchmark_results.json
+
+  publish-benchmarks:
+    name: "Publish Performance Dashboards"
+    needs: [ detect-changes, run-benchmarks ]
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.detect-changes.outputs.run_benchmarks == 'true' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    strategy:
+      matrix:
+        tree: ${{ fromJson(needs.detect-changes.outputs.trees) }}
+      max-parallel: 1
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download specific benchmark result
+        uses: actions/download-artifact@v4
+        with:
+          name: benchmark-${{ matrix.tree }}
+          path: collected-benchmarks
+
+      - name: Publish Metrics for ${{ matrix.tree }}
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          tool: 'pytest'
+          output-file-path: collected-benchmarks/benchmark_results.json
+          name: "${{ matrix.tree }} Architecture"
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          auto-push: true
           benchmark-data-dir-path: "dev/bench/${{ matrix.tree }}"
