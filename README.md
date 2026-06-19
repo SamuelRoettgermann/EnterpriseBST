@@ -7,7 +7,7 @@ A small lab for tree data structures in Python — implement, test, and benchmar
 EnterpriseBST was born out of a desire to create a Binary Search Tree that is "over-engineered", both for the sake of complexity but also to ensure code clarity, modularity, and type safety, as contradicting as that may sound. 
 It's a toy project that takes its silly structure seriously.
 
-## What’s in the repo today
+## What’s in the repo
 
 - General scaffolding for adding tree implementations (module layout, tests, and benchmarking hooks)
 - Comprehensive unit tests and micro‑benchmarks (pytest + pytest‑benchmark)
@@ -15,7 +15,7 @@ It's a toy project that takes its silly structure seriously.
 ### Trees
 - [x] Tree interface (PyDoc describes how it could be extended)
 - [x] Binary Search Tree (unbalanced)
-- [ ] Binary Search Tree (balanced)
+- [X] Binary Search Tree (balanced) (AVL)
 - [ ] Native Python (wrapper around `set`; I know it's not a tree... suggest something better)
 
 ### Benchmark Results
