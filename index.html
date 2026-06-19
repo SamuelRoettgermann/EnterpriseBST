@@ -100,7 +100,6 @@ async function loadTreeData(treeName) {
         if (!response.ok) return null;
         const text = await response.text();
         
-        // .trim() prevents leading newlines/spaces from breaking the regex line-start (^) anchor
         const cleanJsonText = text.trim().replace(/^window\.BENCHMARK_DATA\s*=\s*/, '').replace(/;\s*$/, '');
         return JSON.parse(cleanJsonText);
     } catch (e) {
@@ -113,16 +112,17 @@ async function renderComparisonChart() {
     const bstRaw = await loadTreeData('bst');
     const avlRaw = await loadTreeData('avl');
 
-    const findKey = (data) => data ? Object.keys(data.entries).find(k => k.includes('sorted_sequence')) : null;
+    // Dynamically retrieve the first available suite key (e.g., "bst Architecture")
+    const getSuiteHistory = (raw) => {
+        if (!raw || !raw.entries) return [];
+        const firstKey = Object.keys(raw.entries)[0];
+        return firstKey ? raw.entries[firstKey] : [];
+    };
     
-    const bstKey = findKey(bstRaw);
-    const avlKey = findKey(avlRaw);
-
-    const bstHistory = bstKey ? bstRaw.entries[bstKey] : [];
-    const avlHistory = avlKey ? avlRaw.entries[avlKey] : [];
+    const bstHistory = getSuiteHistory(bstRaw);
+    const avlHistory = getSuiteHistory(avlRaw);
 
     // --- CHRONOLOGICAL TIMELINE ALIGNMENT FIX ---
-    // Map each 7-character commit SHA to its actual git timestamp to preserve the chronological axis
     const commitTimestamps = {};
     bstHistory.forEach(h => {
         const sha = h.commit.id.substring(0, 7);
@@ -133,16 +133,21 @@ async function renderComparisonChart() {
         commitTimestamps[sha] = new Date(h.commit.timestamp || h.date);
     });
 
-    // Sort hashes by actual timestamp age instead of alphabetical sorting
     const uniqueCommits = Object.keys(commitTimestamps).sort((a, b) => commitTimestamps[a] - commitTimestamps[b]);
 
-    const mapDataset = (history) => uniqueCommits.map(sha => {
-        const dataPoint = history.find(h => h.commit.id.startsWith(sha));
-        return dataPoint?.value ?? null;
+    // Dig down into the 'benches' array of each commit snapshot to find the actual metric value
+    const mapDataset = (history, testKeyword) => uniqueCommits.map(sha => {
+        const commitRun = history.find(h => h.commit.id.startsWith(sha));
+        if (!commitRun || !commitRun.benches) return null;
+        
+        // Find the specific test case containing your keyword (case-insensitive)
+        const matchingBench = commitRun.benches.find(b => b.name.toLowerCase().includes(testKeyword.toLowerCase()));
+        return matchingBench ? matchingBench.value : null;
     });
 
-    const bstPoints = mapDataset(bstHistory);
-    const avlPoints = mapDataset(avlHistory);
+    // Scans individual test names inside the benches payload for 'insert' or 'sorted'
+    const bstPoints = mapDataset(bstHistory, 'insert'); 
+    const avlPoints = mapDataset(avlHistory, 'insert');
 
     const ctx = document.getElementById('comparisonChart').getContext('2d');
     new Chart(ctx, {
