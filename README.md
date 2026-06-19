@@ -5,7 +5,7 @@ A small lab for tree data structures in Python — implement, test, and benchmar
 ## Why?
 
 EnterpriseBST was born out of a desire to create a Binary Search Tree that is "over-engineered", both for the sake of complexity but also to ensure code clarity, modularity, and type safety, as contradicting as that may sound. 
-It's a toy project that takes its structure seriously.
+It's a toy project that takes its silly structure seriously.
 
 ## What’s in the repo today
 
