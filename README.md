@@ -19,7 +19,7 @@ It's a toy project that takes its silly structure seriously.
 - [ ] Native Python (wrapper around `set`; I know it's not a tree... suggest something better)
 
 ### Benchmark Results
-https://samuelroettgermann.github.io/EnterpriseBST/dev/bench/
+https://samuelroettgermann.github.io/EnterpriseBST/
 
 ## Getting Started
 
