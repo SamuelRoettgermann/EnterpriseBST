@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1782077250887,
+  "lastUpdate": 1782084145039,
   "repoUrl": "https://github.com/SamuelRoettgermann/EnterpriseBST",
   "entries": {
     "avl": [
@@ -661,6 +661,107 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.000005007343252646309",
             "extra": "mean: 151.9134530989855 usec\nrounds: 6599"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "38440557+SamuelRoettgermann@users.noreply.github.com",
+            "name": "Samuel Röttgermann",
+            "username": "SamuelRoettgermann"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ab97fa0388ad89e015928dba61ae1427ec96bbb7",
+          "message": "Merge pull request #19 from SamuelRoettgermann/rename-native-to-setwrapper\n\nRenamed the `Native` tree to `SetWrapper`",
+          "timestamp": "2026-06-22T01:20:23+02:00",
+          "tree_id": "19bc3a0d70ac1a70d7e083144c2dbdebee704472",
+          "url": "https://github.com/SamuelRoettgermann/EnterpriseBST/commit/ab97fa0388ad89e015928dba61ae1427ec96bbb7"
+        },
+        "date": 1782084144198,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "test/benchmark/test_benchmark_insert.py::test_insertion_random_sequence[AVL]",
+            "value": 12.188626117070154,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0017584537874861827",
+            "extra": "mean: 82.04370126666707 msec\nrounds: 30"
+          },
+          {
+            "name": "test/benchmark/test_benchmark_insert.py::test_insertion_random_sequence_small[AVL]",
+            "value": 156.00561301085804,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00004394032150023168",
+            "extra": "mean: 6.410025772152183 msec\nrounds: 158"
+          },
+          {
+            "name": "test/benchmark/test_benchmark_insert.py::test_insertion_sorted_sequence_small[AVL]",
+            "value": 151.5465865436117,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00004427956621483285",
+            "extra": "mean: 6.598630974193684 msec\nrounds: 155"
+          },
+          {
+            "name": "test/benchmark/test_benchmark_iteration.py::test_iteration_full_sweep[AVL]",
+            "value": 125.8561218785575,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00022458348466068635",
+            "extra": "mean: 7.945580914728417 msec\nrounds: 129"
+          },
+          {
+            "name": "test/benchmark/test_benchmark_min_max.py::test_mixed_lookup[AVL]",
+            "value": 555.4616837304544,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00001777218744358472",
+            "extra": "mean: 1.8003041961131276 msec\nrounds: 566"
+          },
+          {
+            "name": "test/benchmark/test_benchmark_min_max.py::test_only_minimum_lookup[AVL]",
+            "value": 596.287716975926,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000022486592494419996",
+            "extra": "mean: 1.6770427622951911 msec\nrounds: 610"
+          },
+          {
+            "name": "test/benchmark/test_benchmark_min_max.py::test_only_maximum_lookup[AVL]",
+            "value": 586.9489595744417,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00011940265949848509",
+            "extra": "mean: 1.703725653973447 msec\nrounds: 604"
+          },
+          {
+            "name": "test/benchmark/test_benchmark_remove.py::test_remove_miss[AVL]",
+            "value": 1135.2721054654073,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00001131738194092494",
+            "extra": "mean: 880.8460942410347 usec\nrounds: 1146"
+          },
+          {
+            "name": "test/benchmark/test_benchmark_remove.py::test_remove_hit[AVL]",
+            "value": 1078.9693339640492,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000011165386861304305",
+            "extra": "mean: 926.8104000009696 usec\nrounds: 30"
+          },
+          {
+            "name": "test/benchmark/test_benchmark_search.py::test_search_hit[AVL]",
+            "value": 7798.155572850359,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000005931894504254438",
+            "extra": "mean: 128.23545140360451 usec\nrounds: 8015"
+          },
+          {
+            "name": "test/benchmark/test_benchmark_search.py::test_search_miss[AVL]",
+            "value": 7443.970824658629,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000005446585904825085",
+            "extra": "mean: 134.3369047991747 usec\nrounds: 7647"
           }
         ]
       }
