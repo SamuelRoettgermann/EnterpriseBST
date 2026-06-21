@@ -1,7 +1,7 @@
 from trees import Tree
 
 
-class Native[T](Tree[T]):
+class SetWrapper[T](Tree[T]):
     _data: set[T]
 
     def __init__(self):
