@@ -92,7 +92,30 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-// Fetch raw text, isolate the JSON payload securely, and parse it.
+// Predetermined color schemes to maintain historical design language consistency
+const ARCHITECTURE_COLORS = {
+    'bst':    { borderColor: '#afb8c1', backgroundColor: '#afb8c1' }, // GitHub Muted Gray
+    'avl':    { borderColor: '#0969da', backgroundColor: '#0969da' }, // GitHub Accent Blue
+    'native': { borderColor: '#2ea44f', backgroundColor: '#2ea44f' }  // GitHub Success Green
+};
+
+// Extensible fallback color blocks for new implementations added down the line
+const EXTENSIBLE_PALETTE = [
+    '#8250df', // Deep Purple
+    '#bf3b00', // Terracotta Orange
+    '#cf222e', // Critical Red
+    '#bc4c00', // Ochre Brown
+    '#6e7781'  // Slate Gray
+];
+
+function assignColorProfile(slug, fallbackIndex) {
+    if (ARCHITECTURE_COLORS[slug]) {
+        return ARCHITECTURE_COLORS[slug];
+    }
+    const fallbackColor = EXTENSIBLE_PALETTE[fallbackIndex % EXTENSIBLE_PALETTE.length];
+    return { borderColor: fallbackColor, backgroundColor: fallbackColor };
+}
+
 async function loadTreeData(treeName) {
     try {
         const response = await fetch(`./dev/bench/${treeName}/data.js`);
@@ -107,12 +130,10 @@ async function loadTreeData(treeName) {
     }
 }
 
-// Helper to normalize test names by removing architectural brackets (e.g. [BST] or [AVL])
 function normalizeBenchmarkName(name) {
     return name.replace(/\[.+\]/g, '').trim();
 }
 
-// Transforms a raw string like "test_insertion_random_sequence" into a clean header string
 function formatDisplayTitle(rawName) {
     const baseName = rawName.split('::').pop();
     return baseName
@@ -121,49 +142,59 @@ function formatDisplayTitle(rawName) {
 }
 
 async function renderAllPerformanceCharts() {
-    const bstRaw = await loadTreeData('bst');
-    const avlRaw = await loadTreeData('avl');
-    const nativeRaw = await loadTreeData('native');
-
-    const getSuiteHistory = (raw) => {
-        if (!raw || !raw.entries) return [];
-        return Object.values(raw.entries).flat();
-    };
-    
-    const bstHistory = getSuiteHistory(bstRaw);
-    const avlHistory = getSuiteHistory(avlRaw);
-    const nativeHistory = getSuiteHistory(nativeRaw);
-
     const chartsContainer = document.getElementById('chartsContainer');
+    
+    // --- 1. AUTOMATIC ARCHITECTURE DISCOVERY LOOP ---
+    const cards = document.querySelectorAll('main.grid a.card');
+    const detectedArchitectures = Array.from(cards).map(card => {
+        const href = card.getAttribute('href');
+        // Extract folder identifier from string: "./dev/bench/avl/index.html" -> "avl"
+        const folderMatch = href.match(/\/bench\/([^/]+)\//);
+        const slug = folderMatch ? folderMatch[1] : null;
+        
+        // Isolate the designator text without trailing direction characters
+        const displayName = card.querySelector('h2').textContent.replace('→', '').trim();
+        return { slug, displayName };
+    }).filter(arch => arch.slug !== null);
 
-    if (bstHistory.length === 0 && avlHistory.length === 0 && nativeHistory === 0) {
+    // Dynamic resolution of metric pools parallelized across threads
+    const loadedDataPools = await Promise.all(
+        detectedArchitectures.map(async (arch, index) => {
+            const rawData = await loadTreeData(arch.slug);
+            return {
+                ...arch,
+                colorProfile: assignColorProfile(arch.slug, index),
+                history: (rawData && rawData.entries) ? Object.values(rawData.entries).flat() : []
+            };
+        })
+    );
+
+    // Guard evaluation if all dynamic operations fail
+    const totalRunsDetected = loadedDataPools.reduce((acc, curr) => acc + curr.history.length, 0);
+    if (totalRunsDetected === 0) {
         chartsContainer.innerHTML = '<div style="text-align: center; color: #cf222e; padding: 40px;">No diagnostic baseline matrices loaded yet.</div>';
         return;
     }
 
-    // --- 1. CHRONOLOGICAL TIMELINE ALIGNMENT ---
+    // --- 2. CHRONOLOGICAL TIMELINE RECONCILIATION ---
     const commitTimestamps = {};
     const commitMessages = {};
     
-    const extractTimestamps = (history) => {
-        history.forEach(h => {
+    loadedDataPools.forEach(pool => {
+        pool.history.forEach(h => {
             if (h.commit && h.commit.id) {
                 const sha = h.commit.id.substring(0, 7);
                 commitTimestamps[sha] = new Date(h.commit.timestamp || h.date);
                 commitMessages[sha] = h.commit.message;
             }
         });
-    };
-    extractTimestamps(bstHistory);
-    extractTimestamps(avlHistory);
-    extractTimestamps(nativeHistory);
+    });
 
-    // Sort unique repository wide commit SHAs by actual execution dates
+    // Sort global timeline arrays strictly by tracking timestamps
     const uniqueCommits = Object.keys(commitTimestamps).sort((a, b) => commitTimestamps[a] - commitTimestamps[b]);
 
     const formattedLabels = uniqueCommits.map(sha => {
-        const date = commitTimestamps[sha];
-        return date.toLocaleDateString('en-DE', {
+        return commitTimestamps[sha].toLocaleDateString('en-DE', {
             day: '2-digit',
             month: '2-digit',
             year: 'numeric',
@@ -172,41 +203,46 @@ async function renderAllPerformanceCharts() {
         });
     });
 
-    // --- 2. EXTRACT ALL UNIQUE BENCHMARK IDENTIFIERS ---
+    // --- 3. AUTOMATIC BENCHMARK SUITE DISCOVERY ---
     const benchmarkSuites = new Set();
-    const discoverSuites = (history) => {
-        history.forEach(run => {
+    loadedDataPools.forEach(pool => {
+        pool.history.forEach(run => {
             if (run.benches) {
                 run.benches.forEach(b => {
                     benchmarkSuites.add(normalizeBenchmarkName(b.name));
                 });
             }
         });
-    };
-    discoverSuites(bstHistory);
-    discoverSuites(avlHistory);
-    discoverSuites(nativeHistory)
+    });
 
-    // Clear loading indicators
+    // Clear initial DOM loading screens
     chartsContainer.innerHTML = '';
 
-    // --- 3. DYNAMICALLY GENERATE SECTION & CANVAS PER BENCHMARK ---
+    // --- 4. DATASET CONSTRUCTION & GRAPH INFRASTRUCTURE ASSEMBLY ---
     benchmarkSuites.forEach(benchId => {
         
-        // Helper to extract values aligned perfectly with the unique chronological axis map
-        const mapDatasetPoints = (history) => uniqueCommits.map(sha => {
-            const commitRun = history.find(h => h.commit.id.startsWith(sha));
-            if (!commitRun || !commitRun.benches) return null;
-            
-            const matchingBench = commitRun.benches.find(b => normalizeBenchmarkName(b.name) === benchId);
-            return matchingBench ? matchingBench.value : null;
+        // Loop through all architectures automatically to construct dataset structures
+        const chartDatasets = loadedDataPools.map(pool => {
+            const points = uniqueCommits.map(sha => {
+                const commitRun = pool.history.find(h => h.commit.id.startsWith(sha));
+                if (!commitRun || !commitRun.benches) return null;
+                
+                const matchingBench = commitRun.benches.find(b => normalizeBenchmarkName(b.name) === benchId);
+                return matchingBench ? matchingBench.value : null;
+            });
+
+            return {
+                label: pool.displayName,
+                data: points,
+                borderColor: pool.colorProfile.borderColor,
+                backgroundColor: pool.colorProfile.backgroundColor,
+                borderWidth: 2,
+                tension: 0.1,
+                spanGaps: true
+            };
         });
 
-        const bstPoints = mapDatasetPoints(bstHistory);
-        const avlPoints = mapDatasetPoints(avlHistory);
-        const nativePoints = mapDatasetPoints(nativeHistory);
-
-        // Build HTML components dynamically matching your styling rules
+        // Initialize DOM Elements
         const section = document.createElement('section');
         section.className = 'chart-section';
 
@@ -228,40 +264,11 @@ async function renderAllPerformanceCharts() {
         
         chartsContainer.appendChild(section);
 
-        // Initialize a standalone line chart instance per canvas context
         new Chart(canvas.getContext('2d'), {
             type: 'line',
             data: {
                 labels: formattedLabels,
-                datasets: [
-                    {
-                        label: 'Standard BST',
-                        data: bstPoints,
-                        borderColor: '#afb8c1',
-                        backgroundColor: '#afb8c1',
-                        borderWidth: 2,
-                        tension: 0.1,
-                        spanGaps: true
-                    },
-                    {
-                        label: 'Self-Balancing AVL',
-                        data: avlPoints,
-                        borderColor: '#0969da',
-                        backgroundColor: '#0969da',
-                        borderWidth: 2,
-                        tension: 0.1,
-                        spanGaps: true
-                    },
-                    {
-                        label: 'Native Set Wrapper',
-                        data: nativePoints,
-                        borderColor: '#2ea44f',
-                        backgroundColor: '#2ea44f',
-                        borderWidth: 2,
-                        tension: 0.1,
-                        spanGaps: true
-                    },
-                ]
+                datasets: chartDatasets
             },
             options: {
                 responsive: true,
@@ -286,8 +293,7 @@ async function renderAllPerformanceCharts() {
                             afterTitle: function(context) {
                                 const index = context[0].dataIndex;
                                 const targetSha = uniqueCommits[index];
-                                const commitMsg = commitMessages[targetSha] || "";
-                                return `Message: ${commitMsg}`;
+                                return `Message: ${commitMessages[targetSha] || ""}`;
                             }
                         }
                     }
