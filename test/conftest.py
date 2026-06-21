@@ -1,13 +1,12 @@
 import sys
 import pytest
 
-from trees import BST, AVL
-
+from trees import BST, AVL, Native
 
 sys.setrecursionlimit(1_000_000)
 
 
-@pytest.fixture(params=[BST, AVL], ids=["BST", "AVL"])
+@pytest.fixture(params=[BST, AVL, Native], ids=["BST", "AVL", "Native"])
 def tree_factory(request):
     """Provides the class constructors for the trees under test."""
     return request.param
