@@ -1,8 +1,6 @@
 import hypothesis
-from hypothesis import given, strategies as st
 import pytest
-
-import trees
+from hypothesis import given, strategies as st
 
 TYPE_PERMUTATIONS: list[tuple[type, st.SearchStrategy]] = [
     (int, st.integers()),
@@ -118,3 +116,65 @@ def test_structural_depth_boundary_properties(
 
     if current_len == 0:
         assert current_depth == 0
+
+
+@pytest.mark.parametrize("t_type, element_strategy", TYPE_PERMUTATIONS)
+@given(data=st.data())
+@suppress_fixture_warning
+def test_minimum_and_maximum_correctness_properties(
+    tree_factory, t_type, element_strategy, data
+):
+    values = data.draw(st.lists(element_strategy, min_size=1))
+
+    tree = tree_factory[t_type]()
+
+    for value in values:
+        tree.insert(value)
+
+    assert tree.minimum == min(values)
+    assert tree.maximum == max(values)
+
+
+@pytest.mark.parametrize("t_type, element_strategy", TYPE_PERMUTATIONS)
+def test_minimum_and_maximum_empty_tree_error_boundaries(
+    tree_factory, t_type, element_strategy
+):
+    tree = tree_factory[t_type]()
+
+    with pytest.raises(ValueError):
+        _ = tree.minimum
+
+    with pytest.raises(ValueError):
+        _ = tree.maximum
+
+
+@pytest.mark.parametrize("t_type, element_strategy", TYPE_PERMUTATIONS)
+@given(data=st.data())
+@suppress_fixture_warning
+def test_minimum_and_maximum_dynamic_mutation_properties(
+    tree_factory, t_type, element_strategy, data
+):
+    values = data.draw(st.lists(element_strategy, min_size=1))
+
+    tree = tree_factory[t_type]()
+    for value in values:
+        tree.insert(value)
+
+    unique_sorted = sorted(set(values))
+
+    while unique_sorted:
+        assert tree.minimum == unique_sorted[0]
+        assert tree.maximum == unique_sorted[-1]
+
+        if len(unique_sorted) % 2 == 0:
+            to_remove = unique_sorted.pop(0)
+        else:
+            to_remove = unique_sorted.pop()
+
+        assert tree.remove(to_remove) is True
+
+    with pytest.raises(ValueError):
+        _ = tree.minimum
+
+    with pytest.raises(ValueError):
+        _ = tree.maximum
