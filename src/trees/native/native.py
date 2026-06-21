@@ -31,7 +31,7 @@ class Native[T](Tree[T]):
             return "Empty Tree"
 
         output = [f"├── {value}" for value in self._data]
-        output[-1] = f"└{output[1:]}"
+        output[-1] = f"└{output[-1][1:]}"
 
         output[0:0] = ["Root"]
 
