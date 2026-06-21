@@ -55,7 +55,7 @@ class ValueNode[T](Node[T]):
     def remove(self, value: T) -> Node[T]:
         if value == self.value:
             if not self._left.is_leaf() and not self._right.is_leaf():
-                self.value = min(self._right)
+                self.value = self._right.minimum
                 self._right = self._right.remove(self.value)
                 return self
 
@@ -108,3 +108,11 @@ class ValueNode[T](Node[T]):
         yield from self._left
         yield self._val
         yield from self._right
+
+    @property
+    def minimum(self):
+        return self._left.minimum if not self._left.is_leaf() else self.value
+
+    @property
+    def maximum(self):
+        return self._right.maximum if not self._right.is_leaf() else self.value

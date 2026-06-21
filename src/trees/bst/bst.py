@@ -36,3 +36,11 @@ class BST[T](Tree[T]):
 
     def __iter__(self):
         return BSTIterator(self.root)
+
+    @property
+    def minimum(self) -> T:
+        return self.root.minimum
+
+    @property
+    def maximum(self) -> T:
+        return self.root.maximum

@@ -47,3 +47,11 @@ class LeafNode[T](Node[T]):
 
     def __iter__(self):
         yield from []
+
+    @property
+    def minimum(self):
+        raise ValueError("a leaf does not have a minimum")
+
+    @property
+    def maximum(self):
+        raise ValueError("a leaf does not have a maximum")
