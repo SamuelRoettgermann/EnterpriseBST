@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1782065263222,
+  "lastUpdate": 1782067492812,
   "repoUrl": "https://github.com/SamuelRoettgermann/EnterpriseBST",
   "entries": {
     "native": [
@@ -80,6 +80,86 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 4.966091526799512e-7",
             "extra": "mean: 4.683020670782052 usec\nrounds: 114195"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "samu.roettgermann@t-online.de",
+            "name": "Samuel Rötttgermann",
+            "username": "SamuelRoettgermann"
+          },
+          "committer": {
+            "email": "samu.roettgermann@t-online.de",
+            "name": "Samuel Rötttgermann",
+            "username": "SamuelRoettgermann"
+          },
+          "distinct": true,
+          "id": "d0e0a4bf39d5cb9c73ab5a49b60c235c6c0adea7",
+          "message": "fixed __str__ of Native",
+          "timestamp": "2026-06-21T20:43:45+02:00",
+          "tree_id": "7365d098d8582cd60b498caa8e14932194dfa570",
+          "url": "https://github.com/SamuelRoettgermann/EnterpriseBST/commit/d0e0a4bf39d5cb9c73ab5a49b60c235c6c0adea7"
+        },
+        "date": 1782067492286,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "test/benchmark/test_benchmark_insert.py::test_insertion_random_sequence[Native]",
+            "value": 1603.463755136423,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000030032142803780333",
+            "extra": "mean: 623.649893423952 usec\nrounds: 1764"
+          },
+          {
+            "name": "test/benchmark/test_benchmark_insert.py::test_insertion_random_sequence_small[Native]",
+            "value": 16621.20004784003,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000005455300908778526",
+            "extra": "mean: 60.164127567308405 usec\nrounds: 18453"
+          },
+          {
+            "name": "test/benchmark/test_benchmark_insert.py::test_insertion_sorted_sequence_small[Native]",
+            "value": 17485.803213714167,
+            "unit": "iter/sec",
+            "range": "stddev: 0.0000026358231200892204",
+            "extra": "mean: 57.18925163333058 usec\nrounds: 18980"
+          },
+          {
+            "name": "test/benchmark/test_benchmark_iteration.py::test_iteration_full_sweep[Native]",
+            "value": 3195.218828225518,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00002703740665557907",
+            "extra": "mean: 312.96760996972324 usec\nrounds: 3310"
+          },
+          {
+            "name": "test/benchmark/test_benchmark_remove.py::test_remove_miss[Native]",
+            "value": 190543.0825397716,
+            "unit": "iter/sec",
+            "range": "stddev: 7.568147521677425e-7",
+            "extra": "mean: 5.248156934751344 usec\nrounds: 183554"
+          },
+          {
+            "name": "test/benchmark/test_benchmark_remove.py::test_remove_hit[Native]",
+            "value": 102859.49392806973,
+            "unit": "iter/sec",
+            "range": "stddev: 0.000004228168838449898",
+            "extra": "mean: 9.722000000304357 usec\nrounds: 30"
+          },
+          {
+            "name": "test/benchmark/test_benchmark_search.py::test_search_hit[Native]",
+            "value": 213658.6314466053,
+            "unit": "iter/sec",
+            "range": "stddev: 5.177186439381956e-7",
+            "extra": "mean: 4.680363218791404 usec\nrounds: 108308"
+          },
+          {
+            "name": "test/benchmark/test_benchmark_search.py::test_search_miss[Native]",
+            "value": 214451.87938208022,
+            "unit": "iter/sec",
+            "range": "stddev: 5.657297351496483e-7",
+            "extra": "mean: 4.663050764028701 usec\nrounds: 113870"
           }
         ]
       }
