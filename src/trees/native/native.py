@@ -38,4 +38,4 @@ class Native[T](Tree[T]):
         return "\n".join(output)
 
     def __iter__(self):
-        yield from self._data
+        yield from sorted(self._data)
