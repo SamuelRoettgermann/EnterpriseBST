@@ -41,8 +41,10 @@ class Node[T](abc.ABC, collections.abc.Iterable[T]):
     @abc.abstractmethod
     def depth(self) -> int: ...
 
+    @property
     @abc.abstractmethod
     def minimum(self) -> T: ...
 
+    @property
     @abc.abstractmethod
     def maximum(self) -> T: ...

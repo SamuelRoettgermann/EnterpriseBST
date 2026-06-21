@@ -109,8 +109,10 @@ class ValueNode[T](Node[T]):
         yield self._val
         yield from self._right
 
+    @property
     def minimum(self):
-        return self._left.minimum() if not self._left.is_leaf() else self.value
+        return self._left.minimum if not self._left.is_leaf() else self.value
 
+    @property
     def maximum(self):
-        return self._right.maximum() if not self._right.is_leaf() else self.value
+        return self._right.maximum if not self._right.is_leaf() else self.value

@@ -114,11 +114,11 @@ class ValueNode[T](Node[T]):
 
     @property
     def minimum(self):
-        return self.smaller or self
+        return self.smaller.minimum or self
 
     @property
     def maximum(self):
-        return self.larger or self
+        return self.larger.maximum or self
 
     def is_leaf(self) -> bool:
         return False
@@ -146,7 +146,7 @@ class ValueNode[T](Node[T]):
     def remove(self, value: T) -> Node[T]:
         if value == self.value:
             if self.smaller and self.larger:
-                self.value = min(self.larger)
+                self.value = self.larger.minimum.value
                 self.larger = self.larger.remove(self.value)
                 return self._rebalance()
 

@@ -40,8 +40,10 @@ class Native[T](Tree[T]):
     def __iter__(self):
         yield from sorted(self._data)
 
+    @property
     def minimum(self) -> T:
         return min(self._data)
 
+    @property
     def maximum(self) -> T:
         return max(self._data)

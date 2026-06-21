@@ -39,8 +39,8 @@ class BST[T](Tree[T]):
 
     @property
     def minimum(self) -> T:
-        return self.root.minimum()
+        return self.root.minimum
 
     @property
     def maximum(self) -> T:
-        return self.root.maximum()
+        return self.root.maximum
