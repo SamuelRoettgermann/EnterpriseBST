@@ -30,7 +30,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 20px;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
         .card {
             background: #ffffff;
@@ -47,6 +47,55 @@
             box-shadow: 0 4px 12px rgba(140, 149, 159, 0.15);
         }
         .card h2 { font-size: 1.25rem; margin: 0 0 10px 0; color: #0969da; }
+        
+        /* Global Button Filter Area Styling */
+        .controls-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 40px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid #d0d7de;
+            width: 100%;
+            justify-content: center;
+        }
+        .toggle-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            border: 1px solid #d0d7de;
+            background: #ffffff;
+            color: #24292f;
+            box-shadow: 0 1px 0 rgba(27, 31, 36, 0.04);
+            transition: all 0.15s cubic-bezier(0.3, 0, 0.5, 1);
+            user-select: none;
+        }
+        .toggle-btn:hover {
+            background-color: #f6f8fa;
+            border-color: #8c959f;
+        }
+        .toggle-btn .color-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            transition: background-color 0.15s ease;
+        }
+        .toggle-btn.disabled {
+            background-color: #eaeef2;
+            color: #57606a;
+            border-color: #d0d7de;
+            box-shadow: none;
+        }
+        .toggle-btn.disabled .color-dot {
+            background-color: #d0d7de !important;
+        }
+
         .chart-section {
             background: #ffffff;
             border: 1px solid #d0d7de;
@@ -88,6 +137,8 @@
         </a>
     </main>
 
+    <div id="controlsContainer" class="controls-section"></div>
+
     <div id="chartsContainer">
         <div style="text-align: center; color: #57606a; padding: 40px;">Loading historical battleground matrices...</div>
     </div>
@@ -96,14 +147,12 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-// Predetermined color schemes to maintain historical design language consistency
 const ARCHITECTURE_COLORS = {
-    'bst':    { borderColor: '#afb8c1', backgroundColor: '#afb8c1' }, // GitHub Muted Gray
-    'avl':    { borderColor: '#0969da', backgroundColor: '#0969da' }, // GitHub Accent Blue
-    'native': { borderColor: '#2ea44f', backgroundColor: '#2ea44f' }  // GitHub Success Green
+    'bst':        { borderColor: '#afb8c1', backgroundColor: '#afb8c1' }, 
+    'avl':        { borderColor: '#0969da', backgroundColor: '#0969da' }, 
+    'native':     { borderColor: '#2ea44f', backgroundColor: '#2ea44f' }  
 };
 
-// Extensible fallback color blocks for new implementations added down the line
 const EXTENSIBLE_PALETTE = [
     '#8250df', // Deep Purple
     '#bf3b00', // Terracotta Orange
@@ -147,21 +196,22 @@ function formatDisplayTitle(rawName) {
 
 async function renderAllPerformanceCharts() {
     const chartsContainer = document.getElementById('chartsContainer');
+    const controlsContainer = document.getElementById('controlsContainer');
     
+    // Tracks active references globally within execution block to manage event bindings
+    const chartInstances = [];
+
     // --- 1. AUTOMATIC ARCHITECTURE DISCOVERY LOOP ---
     const cards = document.querySelectorAll('main.grid a.card');
     const detectedArchitectures = Array.from(cards).map(card => {
         const href = card.getAttribute('href');
-        // Extract folder identifier from string: "./dev/bench/avl/index.html" -> "avl"
         const folderMatch = href.match(/\/bench\/([^/]+)\//);
         const slug = folderMatch ? folderMatch[1] : null;
         
-        // Isolate the designator text without trailing direction characters
         const displayName = card.querySelector('h2').textContent.replace('→', '').trim();
         return { slug, displayName };
     }).filter(arch => arch.slug !== null);
 
-    // Dynamic resolution of metric pools parallelized across threads
     const loadedDataPools = await Promise.all(
         detectedArchitectures.map(async (arch, index) => {
             const rawData = await loadTreeData(arch.slug);
@@ -173,14 +223,40 @@ async function renderAllPerformanceCharts() {
         })
     );
 
-    // Guard evaluation if all dynamic operations fail
     const totalRunsDetected = loadedDataPools.reduce((acc, curr) => acc + curr.history.length, 0);
     if (totalRunsDetected === 0) {
+        controlsContainer.innerHTML = '';
         chartsContainer.innerHTML = '<div style="text-align: center; color: #cf222e; padding: 40px;">No diagnostic baseline matrices loaded yet.</div>';
         return;
     }
 
-    // --- 2. CHRONOLOGICAL TIMELINE RECONCILIATION ---
+    // --- 2. GENERATE DYNAMIC GLOBAL SWITCHES ---
+    controlsContainer.innerHTML = '';
+    loadedDataPools.forEach((pool, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'toggle-btn';
+        
+        const dot = document.createElement('span');
+        dot.className = 'color-dot';
+        dot.style.backgroundColor = pool.colorProfile.borderColor;
+        
+        const labelText = document.createTextNode(pool.displayName);
+        
+        btn.appendChild(dot);
+        btn.appendChild(labelText);
+        controlsContainer.appendChild(btn);
+        
+        // Harness Closure scoping to bind exact dataset elements directly to click parameters
+        btn.addEventListener('click', () => {
+            const isDeactivated = btn.classList.toggle('disabled');
+            chartInstances.forEach(chart => {
+                chart.setDatasetVisibility(index, !isDeactivated);
+                chart.update(); // Animates the lines smoothly away/into the viewport context
+            });
+        });
+    });
+
+    // --- 3. CHRONOLOGICAL TIMELINE RECONCILIATION ---
     const commitTimestamps = {};
     const commitMessages = {};
     
@@ -194,7 +270,6 @@ async function renderAllPerformanceCharts() {
         });
     });
 
-    // Sort global timeline arrays strictly by tracking timestamps
     const uniqueCommits = Object.keys(commitTimestamps).sort((a, b) => commitTimestamps[a] - commitTimestamps[b]);
 
     const formattedLabels = uniqueCommits.map(sha => {
@@ -207,7 +282,7 @@ async function renderAllPerformanceCharts() {
         });
     });
 
-    // --- 3. AUTOMATIC BENCHMARK SUITE DISCOVERY ---
+    // --- 4. AUTOMATIC BENCHMARK SUITE DISCOVERY ---
     const benchmarkSuites = new Set();
     loadedDataPools.forEach(pool => {
         pool.history.forEach(run => {
@@ -219,13 +294,10 @@ async function renderAllPerformanceCharts() {
         });
     });
 
-    // Clear initial DOM loading screens
     chartsContainer.innerHTML = '';
 
-    // --- 4. DATASET CONSTRUCTION & GRAPH INFRASTRUCTURE ASSEMBLY ---
+    // --- 5. DATASET CONSTRUCTION & GRAPH INFRASTRUCTURE ASSEMBLY ---
     benchmarkSuites.forEach(benchId => {
-        
-        // Loop through all architectures automatically to construct dataset structures
         const chartDatasets = loadedDataPools.map(pool => {
             const points = uniqueCommits.map(sha => {
                 const commitRun = pool.history.find(h => h.commit.id.startsWith(sha));
@@ -246,7 +318,6 @@ async function renderAllPerformanceCharts() {
             };
         });
 
-        // Initialize DOM Elements
         const section = document.createElement('section');
         section.className = 'chart-section';
 
@@ -268,7 +339,7 @@ async function renderAllPerformanceCharts() {
         
         chartsContainer.appendChild(section);
 
-        new Chart(canvas.getContext('2d'), {
+        const chartInstance = new Chart(canvas.getContext('2d'), {
             type: 'line',
             data: {
                 labels: formattedLabels,
@@ -304,6 +375,9 @@ async function renderAllPerformanceCharts() {
                 }
             }
         });
+
+        // Register the active context to global tracking stack
+        chartInstances.push(chartInstance);
     });
 }
 
