@@ -23,6 +23,14 @@ class Node[T](abc.ABC, collections.abc.Iterable[T]):
     @abc.abstractmethod
     def larger(self, value: Node[T]): ...
 
+    @property
+    @abc.abstractmethod
+    def minimum(self) -> Node[T]: ...
+
+    @property
+    @abc.abstractmethod
+    def maximum(self) -> Node[T]: ...
+
     @abc.abstractmethod
     def insert(self, value: T) -> Node[T]: ...
 
@@ -103,6 +111,14 @@ class ValueNode[T](Node[T]):
     @larger.setter
     def larger(self, value: Node[T]):
         self._right = value
+
+    @property
+    def minimum(self):
+        return self.smaller or self
+
+    @property
+    def maximum(self):
+        return self.larger or self
 
     def is_leaf(self) -> bool:
         return False
@@ -256,6 +272,14 @@ class LeafNode[T](Node[T]):
     @larger.setter
     def larger(self, value: Node[T]):
         raise ValueError("a leaf can't have children")
+
+    @property
+    def minimum(self):
+        return self
+
+    @property
+    def maximum(self):
+        return self
 
     def insert(self, value: T) -> Node[T]:
         return ValueNode(value)

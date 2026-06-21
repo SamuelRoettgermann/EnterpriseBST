@@ -35,3 +35,9 @@ class AVL[T](Tree[T]):
 
     def __iter__(self):
         yield from self.root
+
+    def minimum(self) -> T:
+        return self.root.minimum.value
+
+    def maximum(self) -> T:
+        return self.root.maximum.value

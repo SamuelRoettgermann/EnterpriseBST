@@ -47,3 +47,9 @@ class LeafNode[T](Node[T]):
 
     def __iter__(self):
         yield from []
+
+    def minimum(self):
+        return None
+
+    def maximum(self):
+        return None
