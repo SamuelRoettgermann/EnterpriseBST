@@ -1,4 +1,4 @@
-from trees.base import Tree
+from trees import Tree
 from .nodes import Node, LeafNode
 
 

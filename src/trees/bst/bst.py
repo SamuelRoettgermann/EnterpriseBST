@@ -1,8 +1,6 @@
-import collections.abc
-
+from trees import Tree
 from .bst_iterator import BSTIterator
 from .node import Node, LeafNode
-from ..base import Tree
 
 
 class BST[T](Tree[T]):
