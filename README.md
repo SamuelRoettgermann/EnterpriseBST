@@ -16,7 +16,7 @@ It's a toy project that takes its silly structure seriously.
 - [x] Tree interface (PyDoc describes how it could be extended)
 - [x] Binary Search Tree (unbalanced)
 - [X] Binary Search Tree (balanced) (AVL)
-- [ ] Native Python (wrapper around `set`; I know it's not a tree... suggest something better)
+- [X] Native Python (wrapper around `set`; I know it's not a tree... suggest something better)
 
 ### Benchmark Results
 https://samuelroettgermann.github.io/EnterpriseBST/
@@ -110,5 +110,11 @@ class Tree[T](collections.abc.Iterable[T]):
     def __len__(self) -> int: ...
     
     def __str__(self) -> str: ...
+    
+    @property
+    def minimum(self) -> T: ...
+
+    @property
+    def maximum(self) -> T: ...
 
 ```
