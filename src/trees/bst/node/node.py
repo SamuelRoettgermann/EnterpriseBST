@@ -43,8 +43,11 @@ class Node[T](abc.ABC, collections.abc.Iterable[T]):
 
     @property
     @abc.abstractmethod
-    def minimum(self) -> T: ...
+    def minimum(self) -> Node[T]: ...
 
     @property
     @abc.abstractmethod
-    def maximum(self) -> T: ...
+    def maximum(self) -> Node[T]: ...
+
+    def __bool__(self) -> bool:
+        return not self.is_leaf()
