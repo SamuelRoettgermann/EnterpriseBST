@@ -7,7 +7,7 @@ class ValueNode[T](Node[T]):
     _right: Node[T]
 
     def __init__(self, value: T):
-        from trees.bst.node import LeafNode
+        from ..node import LeafNode
 
         self._val = value
         self._left = LeafNode[T]()
@@ -25,9 +25,17 @@ class ValueNode[T](Node[T]):
     def smaller(self) -> Node[T]:
         return self._left
 
+    @smaller.setter
+    def smaller(self, value: T):
+        self._left = value
+
     @property
     def larger(self) -> Node[T]:
         return self._right
+
+    @larger.setter
+    def larger(self, value: T):
+        self._right = value
 
     def is_leaf(self) -> bool:
         return False
@@ -37,9 +45,9 @@ class ValueNode[T](Node[T]):
             return self
 
         if value < self.value:
-            self._left = self._left.insert(value)
+            self.smaller = self.smaller.insert(value)
         else:
-            self._right = self._right.insert(value)
+            self.larger = self.larger.insert(value)
 
         return self
 
@@ -48,34 +56,34 @@ class ValueNode[T](Node[T]):
             return True
 
         if value < self.value:
-            return self._left.search(value)
+            return self.smaller.search(value)
         else:
-            return self._right.search(value)
+            return self.larger.search(value)
 
     def remove(self, value: T) -> Node[T]:
         if value == self.value:
-            if not self._left.is_leaf() and not self._right.is_leaf():
-                self.value = self._right.minimum
-                self._right = self._right.remove(self.value)
+            if self.smaller and self.larger:
+                self.value = self.larger.minimum.value
+                self.larger = self.larger.remove(self.value)
                 return self
 
-            if self._right.is_leaf():
-                return self._left.remove(value)
+            if self.smaller:
+                return self.smaller.remove(value)
             else:
-                return self._right.remove(value)
+                return self.larger.remove(value)
 
         if value < self.value:
-            self._left = self._left.remove(value)
+            self.smaller = self.smaller.remove(value)
         else:
-            self._right = self._right.remove(value)
+            self.larger = self.larger.remove(value)
 
         return self
 
     def depth(self) -> int:
-        return 1 + max(self._left.depth(), self._right.depth())
+        return 1 + max(self.smaller.depth(), self.larger.depth())
 
     def __len__(self):
-        return 1 + len(self._left) + len(self._right)
+        return 1 + len(self.smaller) + len(self.larger)
 
     def _pretty_print(
         self, prefix: str = "", is_left: bool = False, is_root: bool = True
@@ -94,25 +102,25 @@ class ValueNode[T](Node[T]):
 
         lines.append(f"{prefix}{pointer}{self._val}")
 
-        if not (self._left.is_leaf() and self._right.is_leaf()):
+        if self.smaller or self.larger:
             lines.extend(
-                self._left._pretty_print(next_prefix, is_left=True, is_root=False)
+                self.smaller._pretty_print(next_prefix, is_left=True, is_root=False)
             )
             lines.extend(
-                self._right._pretty_print(next_prefix, is_left=False, is_root=False)
+                self.larger._pretty_print(next_prefix, is_left=False, is_root=False)
             )
 
         return lines
 
     def __iter__(self):
-        yield from self._left
-        yield self._val
-        yield from self._right
+        yield from self.smaller
+        yield self.value
+        yield from self.larger
 
     @property
     def minimum(self):
-        return self._left.minimum if not self._left.is_leaf() else self.value
+        return self.smaller.minimum or self
 
     @property
     def maximum(self):
-        return self._right.maximum if not self._right.is_leaf() else self.value
+        return self.larger.maximum or self

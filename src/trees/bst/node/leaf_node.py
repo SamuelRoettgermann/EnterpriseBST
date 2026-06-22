@@ -50,8 +50,8 @@ class LeafNode[T](Node[T]):
 
     @property
     def minimum(self):
-        raise ValueError("a leaf does not have a minimum")
+        return self
 
     @property
     def maximum(self):
-        raise ValueError("a leaf does not have a maximum")
+        return self
