@@ -1,8 +1,10 @@
 import abc
-import collections
+from collections.abc import Iterable
+
+from trees.base import Comparable
 
 
-class Node[T](abc.ABC, collections.abc.Iterable[T]):
+class Node[T: Comparable](abc.ABC, Iterable[T]):
     @property
     @abc.abstractmethod
     def value(self) -> T: ...

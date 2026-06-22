@@ -1,8 +1,10 @@
 import abc
-import collections
+from collections.abc import Iterable, Iterator
+
+from trees.base import Comparable
 
 
-class Node[T](abc.ABC, collections.abc.Iterable[T]):
+class Node[T: Comparable](abc.ABC, Iterable[T]):
     @property
     @abc.abstractmethod
     def value(self) -> T: ...
@@ -76,7 +78,7 @@ class Node[T](abc.ABC, collections.abc.Iterable[T]):
     def _rotate_right(self) -> Node[T]: ...
 
 
-class ValueNode[T](Node[T]):
+class ValueNode[T: Comparable](Node[T]):
     _val: T
     _height: int
     _left: Node[T]
@@ -171,7 +173,7 @@ class ValueNode[T](Node[T]):
     def _pretty_print(
         self, prefix: str = "", is_left: bool = False, is_root: bool = True
     ) -> list[str]:
-        lines = []
+        lines: list[str] = []
 
         if is_root:
             pointer = ""
@@ -195,7 +197,7 @@ class ValueNode[T](Node[T]):
 
         return lines
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[T]:
         yield from self.smaller
         yield self.value
         yield from self.larger
@@ -249,7 +251,7 @@ class ValueNode[T](Node[T]):
         return self
 
 
-class LeafNode[T](Node[T]):
+class LeafNode[T: Comparable](Node[T]):
     def is_leaf(self) -> bool:
         return True
 
@@ -320,5 +322,5 @@ class LeafNode[T](Node[T]):
         pointer = "├── [L] " if is_left else "└── [R] "
         return [f"{prefix}{pointer}·"]
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[T]:
         yield from []

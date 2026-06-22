@@ -1,7 +1,10 @@
+from collections.abc import Iterator
+
+from trees.base import Comparable
 from .node import Node
 
 
-class ValueNode[T](Node[T]):
+class ValueNode[T: Comparable](Node[T]):
     _val: T
     _left: Node[T]
     _right: Node[T]
@@ -26,16 +29,16 @@ class ValueNode[T](Node[T]):
         return self._left
 
     @smaller.setter
-    def smaller(self, value: T):
-        self._left = value
+    def smaller(self, node: Node[T]):
+        self._left = node
 
     @property
     def larger(self) -> Node[T]:
         return self._right
 
     @larger.setter
-    def larger(self, value: T):
-        self._right = value
+    def larger(self, node: Node[T]):
+        self._right = node
 
     def is_leaf(self) -> bool:
         return False
@@ -88,7 +91,7 @@ class ValueNode[T](Node[T]):
     def _pretty_print(
         self, prefix: str = "", is_left: bool = False, is_root: bool = True
     ) -> list[str]:
-        lines = []
+        lines: list[str] = []
 
         if is_root:
             pointer = ""
@@ -112,7 +115,7 @@ class ValueNode[T](Node[T]):
 
         return lines
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[T]:
         yield from self.smaller
         yield self.value
         yield from self.larger

@@ -1,7 +1,11 @@
+from collections.abc import Iterator
+
+from trees.base import Comparable
+
 from .node import Node
 
 
-class LeafNode[T](Node[T]):
+class LeafNode[T: Comparable](Node[T]):
     def is_leaf(self) -> bool:
         return True
 
@@ -20,7 +24,7 @@ class LeafNode[T](Node[T]):
     def insert(self, value: T) -> Node[T]:
         from trees.bst.node import ValueNode
 
-        return ValueNode(value)
+        return ValueNode[T](value)
 
     def search(self, value: T) -> bool:
         return False
@@ -45,7 +49,7 @@ class LeafNode[T](Node[T]):
         pointer = "├── [L] " if is_left else "└── [R] "
         return [f"{prefix}{pointer}·"]
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[T]:
         yield from []
 
     @property

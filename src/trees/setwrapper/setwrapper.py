@@ -1,7 +1,10 @@
+from collections.abc import Iterator
+
 from trees import Tree
+from trees.base import Comparable
 
 
-class SetWrapper[T](Tree[T]):
+class SetWrapper[T: Comparable](Tree[T]):
     _data: set[T]
 
     def __init__(self):
@@ -37,7 +40,7 @@ class SetWrapper[T](Tree[T]):
 
         return "\n".join(output)
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[T]:
         yield from sorted(self._data)
 
     @property
