@@ -1,9 +1,10 @@
 from trees import Tree
+from trees.base import Comparable
 from .bst_iterator import BSTIterator
 from .node import Node, LeafNode
 
 
-class BST[T](Tree[T]):
+class BST[T: Comparable](Tree[T]):
     root: Node[T]
 
     def __init__(self):
@@ -34,7 +35,7 @@ class BST[T](Tree[T]):
     def __str__(self):
         return str(self.root)
 
-    def __iter__(self):
+    def __iter__(self) -> BSTIterator[T]:
         return BSTIterator(self.root)
 
     @property

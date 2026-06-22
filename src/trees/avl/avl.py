@@ -1,8 +1,11 @@
+from collections.abc import Iterator
+
 from trees import Tree
+from trees.base import Comparable
 from .nodes import Node, LeafNode
 
 
-class AVL[T](Tree[T]):
+class AVL[T: Comparable](Tree[T]):
     root: Node[T]
 
     def __init__(self):
@@ -33,7 +36,7 @@ class AVL[T](Tree[T]):
     def __str__(self):
         return str(self.root)
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[T]:
         yield from self.root
 
     @property

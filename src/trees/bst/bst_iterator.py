@@ -1,9 +1,12 @@
 import collections
+from collections.abc import Iterator
+
+from trees.base import Comparable
 
 from .node import Node
 
 
-class BSTIterator[T](collections.abc.Iterator[T]):
+class BSTIterator[T: Comparable](Iterator[T]):
     _stack: collections.deque[Node[T]]
 
     def __init__(self, root: Node[T]):
