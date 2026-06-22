@@ -2,8 +2,10 @@ import abc
 from collections.abc import Iterable
 from typing import Any, Protocol
 
+
 class Comparable(Protocol):
     def __lt__(self, other: Any, /) -> bool: ...
+
 
 class Tree[T: Comparable](abc.ABC, Iterable[T]):
     """A generic Tree.
