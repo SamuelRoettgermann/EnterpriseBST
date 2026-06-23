@@ -127,9 +127,9 @@
             <h2>AVL →</h2>
             <p>A self-balancing binary search tree</p>
         </a>
-        <a href="./dev/bench/native/index.html" class="card">
-            <h2>SetWrapper (OLD) →</h2>
-            <p>Wrapper around the built-in set type - Renamed to SetWrapper</p>
+        <a href="./dev/bench/listwrapper/index.html" class="card">
+            <h2>ListWrapper</h2>
+            <p>Wrapper around the built-in list type</p>
         </a>
         <a href="./dev/bench/setwrapper/index.html" class="card">
             <h2>SetWrapper →</h2>
@@ -150,7 +150,8 @@
 const ARCHITECTURE_COLORS = {
     'bst':        { borderColor: '#afb8c1', backgroundColor: '#afb8c1' }, 
     'avl':        { borderColor: '#0969da', backgroundColor: '#0969da' }, 
-    'native':     { borderColor: '#2ea44f', backgroundColor: '#2ea44f' }  
+    'listwrapper':     { borderColor: '#2ea44f', backgroundColor: '#2ea44f' },
+    'setwrapper':  { borderColor: '#6e7781', backgroundColor: '#6e7781' },
 };
 
 const EXTENSIBLE_PALETTE = [
@@ -158,7 +159,6 @@ const EXTENSIBLE_PALETTE = [
     '#bf3b00', // Terracotta Orange
     '#cf222e', // Critical Red
     '#bc4c00', // Ochre Brown
-    '#6e7781'  // Slate Gray
 ];
 
 function assignColorProfile(slug, fallbackIndex) {
