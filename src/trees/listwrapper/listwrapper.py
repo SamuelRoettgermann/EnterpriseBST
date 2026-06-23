@@ -1,4 +1,5 @@
 import bisect
+from collections.abc import Iterator
 
 from trees import Tree
 from trees.base import Comparable
@@ -57,5 +58,5 @@ class ListWrapper[T: Comparable](Tree[T]):
 
         return self._data[-1]
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[T]:
         yield from self._data
