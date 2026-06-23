@@ -27,7 +27,7 @@ class ListWrapper[T: Comparable](Tree[T]):
         return False
 
     def depth(self) -> int:
-        return 1
+        return bool(self._data)
 
     def __len__(self) -> int:
         return len(self._data)
