@@ -45,10 +45,16 @@ class ListWrapper[T: Comparable](Tree[T]):
 
     @property
     def minimum(self) -> T:
+        if not self._data:
+            raise ValueError("Empty Tree")
+
         return self._data[0]
 
     @property
     def maximum(self) -> T:
+        if not self._data:
+            raise ValueError("Empty Tree")
+
         return self._data[-1]
 
     def __iter__(self):
