@@ -15,12 +15,12 @@ class ListWrapper[T: Comparable](Tree[T]):
             bisect.insort(self._data, value)
 
     def search(self, value: T) -> bool:
-        index = bisect.bisect(self._data, value)
+        index = bisect.bisect_left(self._data, value)
         return index < len(self._data) and self._data[index] == value
 
     def remove(self, value: T) -> bool:
         if value in self:
-            index = bisect.bisect(self._data, value)
+            index = bisect.bisect_left(self._data, value)
             del self._data[index]
             return True
 
