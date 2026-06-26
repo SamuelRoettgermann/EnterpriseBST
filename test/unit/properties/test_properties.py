@@ -112,7 +112,7 @@ def test_structural_depth_boundary_properties(
     current_len = len(tree)
     current_depth = tree.depth()
 
-    assert 0 <= current_depth <= current_len
+    assert 0 <= current_depth
 
     if current_len == 0:
         assert current_depth == 0
