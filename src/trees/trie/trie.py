@@ -62,30 +62,25 @@ class _TrieNode[T]:
 
 class Trie[T: Comparable](Tree[T]):
     _root: _TrieNode[T]
-    _key_func: Any
+    _tokenizer: Any
 
     def __init__(self, key_func: Any = None):
         self._root = _TrieNode[T]()
-        self._key_func = key_func or Trie[T]._default_key_func
+        self._tokenizer = key_func or Trie[T].__default_tokenizer
 
     @classmethod
-    def _default_key_func(cls, value: T) -> T | str:
+    def __default_tokenizer(cls, value: T) -> Iterable[Any]:
         if isinstance(value, float) and value == 0.0:
             return "0.0"
 
-        return value
+        if isinstance(value, Iterable):
+            return value
 
-    def _make_value_iterable(self, value: T) -> Iterable[Any]:
-        canonical_value = self._key_func(value)
-
-        if isinstance(canonical_value, Iterable):
-            return canonical_value  # type: ignore
-
-        return str(canonical_value)
+        return str(value)
 
     def insert(self, value: T):
         current_node = self._root
-        for token in self._make_value_iterable(value):
+        for token in self._tokenizer(value):
             current_node.children.setdefault(token, _TrieNode[T]())
 
             current_node = current_node.children[token]
@@ -94,7 +89,7 @@ class Trie[T: Comparable](Tree[T]):
 
     def search(self, value: T) -> bool:
         current_node = self._root
-        for token in self._make_value_iterable(value):
+        for token in self._tokenizer(value):
             if token not in current_node.children:
                 return False
 
@@ -109,7 +104,7 @@ class Trie[T: Comparable](Tree[T]):
         current_node = self._root
         node_to_remove_from: tuple[_TrieNode[T], Any] = (current_node, None)
 
-        for token in self._make_value_iterable(value):
+        for token in self._tokenizer(value):
             next_node = current_node.children[token]
 
             if node_to_remove_from[1] is None and len(next_node) == 1:
