@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "A small lab for tree data structures in Python"
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = ["flask"]
 
 [project.optional-dependencies]
 dev = [
