@@ -129,11 +129,15 @@
         </a>
         <a href="./dev/bench/listwrapper/index.html" class="card">
             <h2>ListWrapper</h2>
-            <p>Wrapper around the built-in list type</p>
+            <p>Wrapper around the built-in <code>list</code>> type</p>
         </a>
         <a href="./dev/bench/setwrapper/index.html" class="card">
             <h2>SetWrapper →</h2>
-            <p>Wrapper around the built-in set type</p>
+            <p>Wrapper around the built-in <code>set</code> type</p>
+        </a>
+        <a href="./dev/bench/trie/index.html" class="card">
+            <h2>Trie →</h2>
+            <p>A trie for generic data types. Non-iterable types get converted according to a custom <code>tokenizer</code> function, or to <code>str</code> by default</p>
         </a>
     </main>
 
@@ -148,14 +152,14 @@
 
 <script>
 const ARCHITECTURE_COLORS = {
-    'bst':        { borderColor: '#afb8c1', backgroundColor: '#afb8c1' }, 
-    'avl':        { borderColor: '#0969da', backgroundColor: '#0969da' }, 
-    'listwrapper':     { borderColor: '#2ea44f', backgroundColor: '#2ea44f' },
+    'bst':         { borderColor: '#afb8c1', backgroundColor: '#afb8c1' }, 
+    'avl':         { borderColor: '#0969da', backgroundColor: '#0969da' }, 
+    'listwrapper': { borderColor: '#2ea44f', backgroundColor: '#2ea44f' },
     'setwrapper':  { borderColor: '#6e7781', backgroundColor: '#6e7781' },
+    'trie':        { borderColor: '#8250df', backgroundColor: '#8250df' },
 };
 
 const EXTENSIBLE_PALETTE = [
-    '#8250df', // Deep Purple
     '#bf3b00', // Terracotta Orange
     '#cf222e', // Critical Red
     '#bc4c00', // Ochre Brown
