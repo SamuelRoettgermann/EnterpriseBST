@@ -18,6 +18,7 @@ dev = [
     "pytest-benchmark==5.2.3",
     "hypothesis==6.155.5",
     "pyright==1.1.410",
+    "pytest-timeout==2.4.0",
 ]
 
 [tool.setuptools]
@@ -32,6 +33,8 @@ addopts = """
     --benchmark-warmup=on
     --benchmark-disable-gc
     --benchmark-min-rounds=30
+    --benchmark-max-time=2
+    --timeout=60
 """
 
 [tool.pyright]
