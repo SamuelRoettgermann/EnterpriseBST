@@ -22,8 +22,10 @@ class _TrieNode[T]:
     def is_end(self) -> bool:
         return self.value is not None
 
-    def depth(self) -> int:
-        return 1 + max(child.depth() for child in self.children.values())
+    def depth(self, *, is_root: bool) -> int:
+        return (not is_root) + max(
+            (child.depth(is_root=False) for child in self.children.values()), default=0
+        )
 
     def _pretty_print(
         self, prefix: str = "", is_last: bool = True, token: Any = None
@@ -58,15 +60,32 @@ class _TrieNode[T]:
             yield from child
 
 
-class Trie[T: ComparableSequence](Tree[T]):
+class Trie[T: Comparable](Tree[T]):
     _root: _TrieNode[T]
+    _key_func: Any
 
-    def __init__(self):
+    def __init__(self, key_func: Any = None):
         self._root = _TrieNode[T]()
+        self._key_func = key_func or Trie[T]._default_key_func
+
+    @classmethod
+    def _default_key_func(cls, value: T) -> T | str:
+        if isinstance(value, float) and value == 0.0:
+            return "0.0"
+
+        return value
+
+    def _make_value_iterable(self, value: T) -> Iterable[Any]:
+        canonical_value = self._key_func(value)
+
+        if isinstance(canonical_value, Iterable):
+            return canonical_value  # type: ignore
+
+        return str(canonical_value)
 
     def insert(self, value: T):
         current_node = self._root
-        for token in value:
+        for token in self._make_value_iterable(value):
             current_node.children.setdefault(token, _TrieNode[T]())
 
             current_node = current_node.children[token]
@@ -75,7 +94,7 @@ class Trie[T: ComparableSequence](Tree[T]):
 
     def search(self, value: T) -> bool:
         current_node = self._root
-        for token in value:
+        for token in self._make_value_iterable(value):
             if token not in current_node.children:
                 return False
 
@@ -84,32 +103,29 @@ class Trie[T: ComparableSequence](Tree[T]):
         return current_node.is_end()
 
     def remove(self, value: T) -> bool:
-        if not value in self:
+        if value not in self:
             return False
 
         current_node = self._root
-        node_stack = [current_node]
-        for token in value:
+        node_to_remove_from: tuple[_TrieNode[T], Any] = (current_node, None)
+
+        for token in self._make_value_iterable(value):
             next_node = current_node.children[token]
-            if current_node.is_end():
-                node_stack = [
-                    current_node
-                ]  # reset stack; first element is the node to remove from
+
+            if node_to_remove_from[1] is None and len(next_node) == 1:
+                node_to_remove_from = (current_node, token)
 
             current_node = next_node
-            node_stack.append(next_node)
 
-        if len(node_stack) == 1:
-            # only possible if current_node is self._root is node_stack[0] / value is empty
-            self._root.value = None
-            return True
+        current_node.value = None
 
-        del node_stack[0].children[node_stack[1]]
-        node_stack[0].value = None
+        if node_to_remove_from[1] is not None:
+            del node_to_remove_from[0].children[node_to_remove_from[1]]
+
         return True
 
     def depth(self) -> int:
-        return self._root.depth()
+        return self._root.depth(is_root=True)
 
     def __len__(self) -> int:
         return len(self._root)
