@@ -53,11 +53,17 @@
             display: flex;
             flex-wrap: wrap;
             gap: 12px;
-            margin-bottom: 40px;
+            margin-bottom: 20px;
             padding-bottom: 24px;
-            border-bottom: 1px solid #d0d7de;
             width: 100%;
             justify-content: center;
+        }
+        .scale-section {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+            border-bottom: 1px solid #d0d7de;
+            padding-bottom: 24px;
         }
         .toggle-btn {
             display: inline-flex;
@@ -78,6 +84,11 @@
         .toggle-btn:hover {
             background-color: #f6f8fa;
             border-color: #8c959f;
+        }
+        .toggle-btn.active-scale {
+            background-color: #0969da;
+            color: #ffffff;
+            border-color: #0969da;
         }
         .toggle-btn .color-dot {
             width: 10px;
@@ -129,7 +140,7 @@
         </a>
         <a href="./dev/bench/listwrapper/index.html" class="card">
             <h2>ListWrapper</h2>
-            <p>Wrapper around the built-in <code>list</code>> type</p>
+            <p>Wrapper around the built-in <code>list</code> type</p>
         </a>
         <a href="./dev/bench/setwrapper/index.html" class="card">
             <h2>SetWrapper →</h2>
@@ -142,6 +153,7 @@
     </main>
 
     <div id="controlsContainer" class="controls-section"></div>
+    <div id="scaleContainer" class="scale-section"></div>
 
     <div id="chartsContainer">
         <div style="text-align: center; color: #57606a; padding: 40px;">Loading historical battleground matrices...</div>
@@ -201,9 +213,11 @@ function formatDisplayTitle(rawName) {
 async function renderAllPerformanceCharts() {
     const chartsContainer = document.getElementById('chartsContainer');
     const controlsContainer = document.getElementById('controlsContainer');
+    const scaleContainer = document.getElementById('scaleContainer');
     
     // Tracks active references globally within execution block to manage event bindings
     const chartInstances = [];
+    let currentScaleMode = 'linear';
 
     // --- 1. AUTOMATIC ARCHITECTURE DISCOVERY LOOP ---
     const cards = document.querySelectorAll('main.grid a.card');
@@ -230,6 +244,7 @@ async function renderAllPerformanceCharts() {
     const totalRunsDetected = loadedDataPools.reduce((acc, curr) => acc + curr.history.length, 0);
     if (totalRunsDetected === 0) {
         controlsContainer.innerHTML = '';
+        scaleContainer.innerHTML = '';
         chartsContainer.innerHTML = '<div style="text-align: center; color: #cf222e; padding: 40px;">No diagnostic baseline matrices loaded yet.</div>';
         return;
     }
@@ -257,6 +272,34 @@ async function renderAllPerformanceCharts() {
                 chart.setDatasetVisibility(index, !isDeactivated);
                 chart.update(); // Animates the lines smoothly away/into the viewport context
             });
+        });
+    });
+
+    // --- 2.5 GENERATE SCALE MODE TOGGLE ---
+    scaleContainer.innerHTML = '';
+    const scaleBtn = document.createElement('button');
+    scaleBtn.className = 'toggle-btn';
+    scaleBtn.innerHTML = '⚙️ Axis Scale: <strong>Linear</strong>';
+    scaleContainer.appendChild(scaleBtn);
+
+    scaleBtn.addEventListener('click', () => {
+        currentScaleMode = currentScaleMode === 'linear' ? 'logarithmic' : 'linear';
+        
+        if (currentScaleMode === 'logarithmic') {
+            scaleBtn.innerHTML = '⚙️ Axis Scale: <strong>Logarithmic</strong>';
+            scaleBtn.classList.add('active-scale');
+        } else {
+            scaleBtn.innerHTML = '⚙️ Axis Scale: <strong>Linear</strong>';
+            scaleBtn.classList.remove('active-scale');
+        }
+
+        chartInstances.forEach(chart => {
+            chart.options.scales.y.type = currentScaleMode;
+            // Native fix for Chart.js log scale formatting constraints
+            chart.options.scales.y.ticks.callback = function(value) {
+                return Number(value).toLocaleString('en-DE');
+            };
+            chart.update();
         });
     });
 
@@ -354,6 +397,7 @@ async function renderAllPerformanceCharts() {
                 maintainAspectRatio: false,
                 scales: {
                     y: {
+                        type: 'linear', // Base configuration state
                         title: { display: true, text: 'Throughput (iter/sec)' },
                         beginAtZero: true
                     },
