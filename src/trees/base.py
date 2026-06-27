@@ -23,17 +23,18 @@ class Tree[T: Comparable](abc.ABC, Iterable[T]):
     """
 
     @abc.abstractmethod
-    def __init__(self): ...
+    def __init__(self):
+        raise NotImplemented
 
     @abc.abstractmethod
-    def insert(self, value: T):
+    def insert(self, value: T) -> None:
         """Inserts a value into the Tree. Does not modify the Tree if the value is already present."""
-        ...
+        raise NotImplemented
 
     @abc.abstractmethod
     def search(self, value: T) -> bool:
         """Returns True if the value is in the Tree, False otherwise."""
-        ...
+        raise NotImplemented
 
     def __contains__(self, value: T) -> bool:
         return self.search(value)
@@ -41,23 +42,27 @@ class Tree[T: Comparable](abc.ABC, Iterable[T]):
     @abc.abstractmethod
     def remove(self, value: T) -> bool:
         """Removes the value from the Tree and returns True if the value was in the Tree, False otherwise."""
-        ...
+        raise NotImplemented
 
     @abc.abstractmethod
     def depth(self) -> int:
         """Returns the maximum depth of the Tree."""
-        ...
+        raise NotImplemented
 
     @abc.abstractmethod
-    def __len__(self) -> int: ...
+    def __len__(self) -> int:
+        raise NotImplemented
 
     @abc.abstractmethod
-    def __str__(self) -> str: ...
-
-    @property
-    @abc.abstractmethod
-    def minimum(self) -> T: ...
+    def __str__(self) -> str:
+        raise NotImplemented
 
     @property
     @abc.abstractmethod
-    def maximum(self) -> T: ...
+    def minimum(self) -> T:
+        raise NotImplemented
+
+    @property
+    @abc.abstractmethod
+    def maximum(self) -> T:
+        raise NotImplemented
