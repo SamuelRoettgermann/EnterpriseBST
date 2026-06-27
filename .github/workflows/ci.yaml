@@ -29,7 +29,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install ".[dev]"
+          pip install .[dev]
 
       - name: Check code formatting
         run: black --check .
@@ -38,7 +38,7 @@ jobs:
         run: pyright
 
       - name: Run unit tests
-        run: pytest --benchmark-skip
+        run: pytest --benchmark-skip -v
 
   detect-changes:
     name: "Detect Modified Tree Scopes"
@@ -122,11 +122,11 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install ".[dev]"
+          pip install .[dev]
 
       - name: Run benchmarks for ${{ matrix.tree }}
         run: |
-          pytest --benchmark-only -k "${{ matrix.tree }}" --benchmark-json=benchmark_results.json
+          pytest --benchmark-only -v -k "${{ matrix.tree }}" --benchmark-json=benchmark_results.json
 
       - name: Continuous Performance Tracking
         uses: benchmark-action/github-action-benchmark@v1
