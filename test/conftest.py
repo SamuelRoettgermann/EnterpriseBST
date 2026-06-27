@@ -7,8 +7,8 @@ sys.setrecursionlimit(1_000_000)
 
 
 @pytest.fixture(
-    params=[BST, AVL, SetWrapper, ListWrapper, Trie],
-    ids=["BST", "AVL", "SetWrapper", "ListWrapper", "Trie"],
+    params=[BST, AVL, SetWrapper, ListWrapper, Trie, BPlusTree],
+    ids=["BST", "AVL", "SetWrapper", "ListWrapper", "Trie", "BPlusTree"],
 )
 def tree_factory(request):
     """Provides the class constructors for the trees under test."""
