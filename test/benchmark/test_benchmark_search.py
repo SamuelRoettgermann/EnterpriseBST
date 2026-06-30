@@ -1,22 +1,19 @@
 import random
 
 
-def execute_search_benchmark(benchmark, tree, lookups):
-    """Measures read and traversal latency on an established tree structure."""
+def test_search_hit(benchmark, tree_and_data):
+    tree, dataset = tree_and_data
 
-    def runner():
-        for value in lookups:
-            tree.search(value)
+    sample_size = min(100, len(dataset.inserted))
+    lookups = random.sample(dataset.inserted, sample_size)
 
-    benchmark(runner)
-
-
-def test_search_hit(benchmark, populated_tree, random_data):
-    existing_values = random.sample(random_data, 100)
-
-    execute_search_benchmark(benchmark, populated_tree, existing_values)
+    benchmark(lambda: [tree.search(value) for value in lookups])
 
 
-def test_search_miss(benchmark, populated_tree):
-    non_existent_values = list(range(10_000, 10_100))
-    execute_search_benchmark(benchmark, populated_tree, non_existent_values)
+def test_search_miss(benchmark, tree_and_data):
+    tree, dataset = tree_and_data
+
+    sample_size = min(100, len(dataset.misses))
+    lookups = random.sample(dataset.misses, sample_size)
+
+    benchmark(lambda: [tree.search(value) for value in lookups])

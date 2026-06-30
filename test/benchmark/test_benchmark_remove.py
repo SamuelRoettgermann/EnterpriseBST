@@ -1,23 +1,28 @@
 import random
 
 
-def test_remove_miss(benchmark, populated_tree):
-    non_existent_values = list(range(10_000, 10_100))
+def test_remove_miss(benchmark, tree_and_data):
+    tree, data = tree_and_data
+    sample_size = min(100, len(data.misses))
+    non_existent_values = random.sample(data.misses, sample_size)
 
     def runner():
         for value in non_existent_values:
-            populated_tree.remove(value)
+            tree.remove(value)
 
     benchmark(runner)
 
 
-def test_remove_hit(benchmark, tree_factory, random_data):
-    targets_to_remove = random.sample(random_data, 100)
+def test_remove_hit(benchmark, tree_factory, benchmark_payload):
+    sample_size = min(100, len(benchmark_payload.inserted))
+    targets_to_remove = random.sample(benchmark_payload.inserted, sample_size)
+
+    t_type = type(benchmark_payload.inserted[0])
 
     def setup_pristine_tree():
-        tree = tree_factory[int]()
+        tree = tree_factory[t_type]()
 
-        for value in random_data:
+        for value in benchmark_payload.inserted:
             tree.insert(value)
 
         return (tree,), {}
