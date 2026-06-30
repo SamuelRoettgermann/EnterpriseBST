@@ -1,14 +1,20 @@
-def test_mixed_lookup(benchmark, populated_tree):
+def test_mixed_lookup(benchmark, tree_and_data):
+    tree, _ = tree_and_data
+
     def runner():
-        _ = populated_tree.minimum
-        _ = populated_tree.maximum
+        _ = tree.minimum
+        _ = tree.maximum
 
     benchmark(runner)
 
 
-def test_only_minimum_lookup(benchmark, populated_tree):
-    benchmark(lambda: populated_tree.minimum)
+def test_only_minimum_lookup(benchmark, tree_and_data):
+    tree, _ = tree_and_data
+
+    benchmark(lambda: tree.minimum)
 
 
-def test_only_maximum_lookup(benchmark, populated_tree):
-    benchmark(lambda: populated_tree.maximum)
+def test_only_maximum_lookup(benchmark, tree_and_data):
+    tree, _ = tree_and_data
+
+    benchmark(lambda: tree.maximum)
