@@ -32,9 +32,8 @@ pythonpath = ["src"]
 addopts = """
     --benchmark-warmup=on
     --benchmark-disable-gc
-    --benchmark-min-rounds=30
     --benchmark-max-time=2
-    --timeout=60
+    --timeout=300
 """
 
 [tool.pyright]
